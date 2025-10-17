@@ -148,19 +148,20 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
     try {
       const location = await enhancedLocationService.getCurrentLocation();
       if (location) {
-        setUserLocation({
+        const userCoords = {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-        });
+        };
+        setUserLocation(userCoords);
 
         // Update map region if no other coordinates are set
-        if (!pickupCoords && !destinationCoords) {
-          setMapRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
+        if (!pickupCoords && !destinationCoords && mapRef.current && isMapReady) {
+          console.log('🗺️ Centering map on user location:', userCoords);
+          mapRef.current.animateToRegion({
+            ...userCoords,
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
-          });
+          }, 1000);
         }
       }
     } catch (error) {
@@ -258,6 +259,11 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
       }, 1000);
+    } else {
+      // No coordinates, zoom to Hosur region
+      mapRef.current.animateToRegion({
+        ...HOSUR_COORDINATES,
+      }, 1000);
     }
   };
 
@@ -293,16 +299,18 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
         scrollEnabled={true}
         zoomEnabled={true}
       >
-        {/* User Location Marker (for web or custom styling) */}
-        {userLocation && showUserLocation && Platform.OS === 'web' && (
-          <Marker 
-            coordinate={userLocation} 
+        {/* User Location Marker - Show when no pickup is set */}
+        {userLocation && showUserLocation && !pickupCoords && (
+          <Marker
+            coordinate={userLocation}
             identifier="user_location"
             title="Your Location"
+            description="You are here"
             anchor={{ x: 0.5, y: 0.5 }}
           >
-            <View style={styles.userLocationMarker}>
-              <View style={styles.userLocationDot} />
+            <View style={styles.currentLocationMarker}>
+              <View style={styles.currentLocationPulse} />
+              <View style={styles.currentLocationDot} />
             </View>
           </Marker>
         )}
@@ -509,6 +517,34 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     backgroundColor: '#2563EB',
+  },
+  currentLocationMarker: {
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  currentLocationPulse: {
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(37, 99, 235, 0.4)',
+  },
+  currentLocationDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#2563EB',
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   markerContainer: {
     width: 36,
