@@ -9,7 +9,9 @@
     "web": "EXPO_NO_TELEMETRY=1 npx expo start --web --port 8081",
     "build:web": "expo export --platform web",
     "lint": "expo lint",
-    "postinstall": "echo 'Dependencies installed successfully'"
+    "postinstall": "echo 'Dependencies installed successfully'",
+    "build:android": "EAS_NO_VCS=1 eas build --platform android",
+    "build:android:preview": "EAS_NO_VCS=1 eas build --platform android --profile preview"
   },
   "resolutions": {
     "expo-constants": "17.1.7",
