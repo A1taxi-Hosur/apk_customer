@@ -23,9 +23,7 @@
           "apiKey": "AIzaSyBIHJUk4DuAG7tjp_gIdNhUJdpBKN1eM2Q"
         }
       },
-      "package": "com.a1taxi.a1taxicustomer",
-      "kotlinVersion": "2.0.21",
-      "kspVersion": "2.0.21-1.0.27"
+      "package": "com.a1taxi.a1taxicustomer"
     },
     "web": {
       "bundler": "metro",
@@ -39,6 +37,14 @@
         "expo-router",
         {
           "root": "./app"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.0.21"
+          }
         }
       ],
       "expo-font",
