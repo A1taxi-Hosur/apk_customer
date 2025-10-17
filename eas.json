@@ -10,12 +10,21 @@
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease",
+        "env": {
+          "EXPO_USE_KOTLIN_VERSION": "2.0.21",
+          "EXPO_USE_KSP_VERSION": "2.0.21-1.0.27"
+        }
       }
     },
     "production": {
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "env": {
+          "EXPO_USE_KOTLIN_VERSION": "2.0.21",
+          "EXPO_USE_KSP_VERSION": "2.0.21-1.0.27"
+        }
       }
     }
   },
