@@ -1,14 +1,20 @@
 import React from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
-import { useRouter, useSegments } from 'expo-router';
+import { useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function AuthNavigator({ children }: { children: React.ReactNode }) {
+export default function AuthNavigator() {
   const { user, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const navigationState = useRootNavigationState();
 
   React.useEffect(() => {
+    // Wait for navigation to be ready
+    if (!navigationState?.key) {
+      console.log('⏳ AuthNavigator - waiting for navigation to be ready');
+      return;
+    }
+
     console.log('🔍 AuthNavigator - checking auth state:', {
       user: !!user,
       loading,
@@ -46,25 +52,7 @@ export default function AuthNavigator({ children }: { children: React.ReactNode 
     } else if (user && !inAuthGroup) {
       console.log('✅ User authenticated and on correct screen');
     }
-  }, [user, loading, segments]);
+  }, [user, loading, segments, navigationState?.key]);
 
-  if (loading) {
-    console.log('⏳ AuthNavigator - showing loading screen');
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2563EB" />
-      </View>
-    );
-  }
-
-  return <>{children}</>;
+  return null;
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-  },
-});
