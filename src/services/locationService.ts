@@ -1,5 +1,4 @@
 import { Platform, PermissionsAndroid } from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
 import * as Location from 'expo-location';
 import { supabase } from '../utils/supabase';
 
@@ -120,76 +119,56 @@ class LocationService {
   }
 
   private async getCurrentLocationGeolocation(): Promise<LocationObject | null> {
-    return new Promise((resolve, reject) => {
-      console.log('🎯 Getting position with Geolocation Service...');
-      
-      Geolocation.getCurrentPosition(
-        (position) => {
-          console.log('📍 Raw Geolocation Service position:', {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-            altitude: position.coords.altitude,
-            heading: position.coords.heading,
-            speed: position.coords.speed,
-            timestamp: new Date(position.timestamp).toLocaleString()
-          });
-          
-          const location: LocationObject = {
-            coords: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              accuracy: position.coords.accuracy,
-              altitude: position.coords.altitude,
-              heading: position.coords.heading,
-              speed: position.coords.speed,
-            },
-            timestamp: position.timestamp,
-          };
+    try {
+      console.log('🎯 Getting position with Expo Location...');
 
-          // Validate coordinates
-          if (this.isValidCoordinate(location.coords.latitude, location.coords.longitude)) {
-            console.log('✅ Valid coordinates from Geolocation Service');
-            
-            // Check accuracy
-            if (location.coords.accuracy && location.coords.accuracy > 100) {
-              console.warn('⚠️ Low accuracy GPS reading:', location.coords.accuracy + 'm');
-            } else {
-              console.log('✅ Good accuracy GPS reading:', location.coords.accuracy + 'm');
-            }
-            
-            this.lastKnownLocation = location;
-            resolve(location);
-          } else {
-            console.error('❌ Invalid coordinates from Geolocation Service:', location.coords);
-            reject(new Error('Invalid GPS coordinates from Geolocation Service'));
-          }
+      const position = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      console.log('📍 Raw Expo Location position:', {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+        altitude: position.coords.altitude,
+        heading: position.coords.heading,
+        speed: position.coords.speed,
+        timestamp: new Date(position.timestamp).toLocaleString()
+      });
+
+      const location: LocationObject = {
+        coords: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy || undefined,
+          altitude: position.coords.altitude || undefined,
+          heading: position.coords.heading || undefined,
+          speed: position.coords.speed || undefined,
         },
-        (error) => {
-          console.error('❌ Geolocation Service error:', {
-            code: error.code,
-            message: error.message,
-            PERMISSION_DENIED: error.PERMISSION_DENIED,
-            POSITION_UNAVAILABLE: error.POSITION_UNAVAILABLE,
-            TIMEOUT: error.TIMEOUT
-          });
-          reject(error);
-        },
-        {
-          accuracy: {
-            android: 'high',
-            ios: 'bestForNavigation',
-          },
-          enableHighAccuracy: true,
-          timeout: 30000,
-          maximumAge: 5000, // Use cached location if less than 5 seconds old
-          distanceFilter: 0,
-          forceRequestLocation: true,
-          forceLocationManager: false,
-          showLocationDialog: true,
+        timestamp: position.timestamp,
+      };
+
+      // Validate coordinates
+      if (this.isValidCoordinate(location.coords.latitude, location.coords.longitude)) {
+        console.log('✅ Valid coordinates from Expo Location');
+
+        // Check accuracy
+        if (location.coords.accuracy && location.coords.accuracy > 100) {
+          console.warn('⚠️ Low accuracy GPS reading:', location.coords.accuracy + 'm');
+        } else {
+          console.log('✅ Good accuracy GPS reading:', location.coords.accuracy + 'm');
         }
-      );
-    });
+
+        this.lastKnownLocation = location;
+        return location;
+      } else {
+        console.error('❌ Invalid coordinates from Expo Location:', location.coords);
+        throw new Error('Invalid GPS coordinates from Expo Location');
+      }
+    } catch (error) {
+      console.error('❌ Expo Location error:', error);
+      throw error;
+    }
   }
 
   private async getCurrentLocationWeb(): Promise<LocationObject | null> {
@@ -306,7 +285,12 @@ class LocationService {
         return true;
       }
 
-      this.watchId = Geolocation.watchPosition(
+      const subscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          distanceInterval: 5,
+          timeInterval: 5000,
+        },
         (position) => {
           console.log('📍 Location tracking update:', {
             userId,
@@ -319,10 +303,10 @@ class LocationService {
             coords: {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
-              accuracy: position.coords.accuracy,
-              altitude: position.coords.altitude,
-              heading: position.coords.heading,
-              speed: position.coords.speed,
+              accuracy: position.coords.accuracy || undefined,
+              altitude: position.coords.altitude || undefined,
+              heading: position.coords.heading || undefined,
+              speed: position.coords.speed || undefined,
             },
             timestamp: position.timestamp,
           };
@@ -331,25 +315,11 @@ class LocationService {
             this.lastKnownLocation = location;
             this.updateLocationInDatabase(userId, location);
           }
-        },
-        (error) => {
-          console.error('❌ Location tracking error:', error);
-        },
-        {
-          accuracy: {
-            android: 'high',
-            ios: 'bestForNavigation',
-          },
-          enableHighAccuracy: true,
-          distanceFilter: 5,
-          interval: 5000,
-          fastestInterval: 2000,
-          forceRequestLocation: true,
-          forceLocationManager: false,
-          showLocationDialog: true,
         }
       );
 
+      // Store subscription for cleanup
+      this.watchId = subscription as any;
       this.isTracking = true;
       console.log('✅ Location tracking started successfully');
       return true;
@@ -421,7 +391,9 @@ class LocationService {
       if (Platform.OS === 'web') {
         clearInterval(this.watchId);
       } else {
-        Geolocation.clearWatch(this.watchId);
+        if (this.watchId && typeof (this.watchId as any).remove === 'function') {
+          (this.watchId as any).remove();
+        }
       }
       this.watchId = null;
     }

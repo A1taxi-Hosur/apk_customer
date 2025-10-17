@@ -1,5 +1,4 @@
 import { Platform, PermissionsAndroid } from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
 import * as Location from 'expo-location';
 import { googleMapsService } from './googleMapsService';
 
@@ -206,44 +205,37 @@ class EnhancedLocationService {
   }
 
   private async getCurrentLocationHighAccuracy(): Promise<LocationObject | null> {
-    return new Promise((resolve, reject) => {
-      Geolocation.getCurrentPosition(
-        (position) => {
-          const location: LocationObject = {
-            coords: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              accuracy: position.coords.accuracy,
-              altitude: position.coords.altitude,
-              heading: position.coords.heading,
-              speed: position.coords.speed,
-            },
-            timestamp: position.timestamp,
-          };
+    try {
+      console.log('📱 Using Expo Location for high accuracy...');
 
-          if (this.isValidCoordinate(location.coords.latitude, location.coords.longitude)) {
-            this.lastKnownLocation = location;
-            resolve(location);
-          } else {
-            reject(new Error('Invalid coordinates'));
-          }
+      const expoLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+        timeInterval: 5000,
+        distanceInterval: 0,
+      });
+
+      const location: LocationObject = {
+        coords: {
+          latitude: expoLocation.coords.latitude,
+          longitude: expoLocation.coords.longitude,
+          accuracy: expoLocation.coords.accuracy || undefined,
+          altitude: expoLocation.coords.altitude || undefined,
+          heading: expoLocation.coords.heading || undefined,
+          speed: expoLocation.coords.speed || undefined,
         },
-        (error) => reject(error),
-        {
-          accuracy: {
-            android: 'high',
-            ios: 'bestForNavigation',
-          },
-          enableHighAccuracy: true,
-          timeout: 20000,
-          maximumAge: 5000,
-          distanceFilter: 0,
-          forceRequestLocation: true,
-          forceLocationManager: false,
-          showLocationDialog: true,
-        }
-      );
-    });
+        timestamp: expoLocation.timestamp,
+      };
+
+      if (this.isValidCoordinate(location.coords.latitude, location.coords.longitude)) {
+        this.lastKnownLocation = location;
+        return location;
+      } else {
+        throw new Error('Invalid coordinates');
+      }
+    } catch (error) {
+      console.error('❌ High accuracy location failed:', error);
+      throw error;
+    }
   }
 
   private async getCurrentLocationStandard(): Promise<LocationObject | null> {
@@ -446,16 +438,21 @@ class EnhancedLocationService {
         return true;
       }
 
-      this.watchId = Geolocation.watchPosition(
+      const subscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.BestForNavigation,
+          distanceInterval: 5, // Update every 5 meters
+          timeInterval: 3000, // Update every 3 seconds
+        },
         (position) => {
           const location: LocationObject = {
             coords: {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
-              accuracy: position.coords.accuracy,
-              altitude: position.coords.altitude,
-              heading: position.coords.heading,
-              speed: position.coords.speed,
+              accuracy: position.coords.accuracy || undefined,
+              altitude: position.coords.altitude || undefined,
+              heading: position.coords.heading || undefined,
+              speed: position.coords.speed || undefined,
             },
             timestamp: position.timestamp,
           };
@@ -464,24 +461,11 @@ class EnhancedLocationService {
             this.lastKnownLocation = location;
             onLocationUpdate(location);
           }
-        },
-        (error) => {
-          console.error('❌ Location tracking error:', error);
-        },
-        {
-          accuracy: {
-            android: 'high',
-            ios: 'bestForNavigation',
-          },
-          enableHighAccuracy: true,
-          distanceFilter: 5, // Update every 5 meters
-          interval: 3000, // Update every 3 seconds
-          fastestInterval: 1000,
-          forceRequestLocation: true,
-          forceLocationManager: false,
-          showLocationDialog: true,
         }
       );
+
+      // Store subscription for cleanup
+      this.watchId = subscription as any;
 
       this.isTracking = true;
       return true;
@@ -529,7 +513,10 @@ class EnhancedLocationService {
       if (Platform.OS === 'web') {
         clearInterval(this.watchId);
       } else {
-        Geolocation.clearWatch(this.watchId);
+        // For expo-location subscription
+        if (this.watchId && typeof (this.watchId as any).remove === 'function') {
+          (this.watchId as any).remove();
+        }
       }
       this.watchId = null;
     }
