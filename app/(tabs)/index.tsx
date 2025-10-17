@@ -448,9 +448,10 @@ export default function HomeScreen() {
       console.log('📍 [HOME] Starting location fetch...');
 
       // Add timeout wrapper to prevent infinite loading
+      // Note: Timeout is 30 seconds to allow for permission dialog + location fetch
       const locationPromise = enhancedLocationService.getCurrentLocationWithAddress();
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Location request timed out after 15 seconds')), 15000)
+        setTimeout(() => reject(new Error('Location request timed out after 30 seconds')), 30000)
       );
 
       const locationWithAddress = await Promise.race([locationPromise, timeoutPromise]) as any;
