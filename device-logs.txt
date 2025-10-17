@@ -1,0 +1,6 @@
+# Device Logs
+
+Paste your adb logcat output here.
+
+---
+
