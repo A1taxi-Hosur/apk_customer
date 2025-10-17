@@ -20,7 +20,8 @@
       ],
       "config": {
         "apiKey": "AIzaSyBIHJUk4DuAG7tjp_gIdNhUJdpBKN1eM2Q"
-      }
+      },
+      "package": "com.a1taxi.a1taxicustomer"
     },
     "web": {
       "bundler": "metro",
