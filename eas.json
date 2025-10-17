@@ -11,20 +11,12 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease",
-        "env": {
-          "EXPO_USE_KOTLIN_VERSION": "2.0.21",
-          "EXPO_USE_KSP_VERSION": "2.0.21-1.0.27"
-        }
+        "gradleCommand": ":app:assembleRelease"
       }
     },
     "production": {
       "android": {
-        "buildType": "apk",
-        "env": {
-          "EXPO_USE_KOTLIN_VERSION": "2.0.21",
-          "EXPO_USE_KSP_VERSION": "2.0.21-1.0.27"
-        }
+        "buildType": "apk"
       }
     }
   },
