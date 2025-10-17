@@ -109,10 +109,11 @@ export default function HomeScreen() {
   const [allVehicleFares, setAllVehicleFares] = useState<{ [key in VehicleType]?: number }>({});
 
   useEffect(() => {
-    getCurrentLocation();
+    // Request location permission immediately on mount for all platforms
+    requestLocationPermissionOnMount();
     loadVehicleTypes();
     loadActiveZones();
-    
+
     // Cleanup polling on unmount
     return () => {
       stopDriverLocationPolling();
@@ -151,12 +152,6 @@ export default function HomeScreen() {
     }
   }, [pickupCoords, destinationCoords]);
 
-  useEffect(() => {
-    // Request location permission immediately when component mounts on Android
-    if (Platform.OS === 'android') {
-      requestLocationPermissionOnMount();
-    }
-  }, []);
 
   const startDriverLocationPolling = () => {
     if (!currentLocation) {
@@ -236,26 +231,32 @@ export default function HomeScreen() {
 
   const requestLocationPermissionOnMount = async () => {
     try {
-      console.log('📱 Requesting location permission on app start...');
+      console.log('📱 Requesting location permission on app start for all platforms...');
+      console.log('📱 Current platform:', Platform.OS);
+
       const hasPermission = await enhancedLocationService.requestLocationPermission();
-      
+
       if (hasPermission) {
         console.log('✅ Location permission granted on mount');
-        // Refresh location after permission granted
-        getCurrentLocation();
+        // Immediately get location after permission granted
+        await getCurrentLocation();
       } else {
         console.log('❌ Location permission denied on mount');
+        setLocationLoading(false); // Stop showing loading
         showCustomAlert(
           'Location Permission Required',
           'A1 Taxi needs location access to find nearby drivers and provide accurate pickup services. Please enable location access in your device settings.',
           'warning',
           [
-            { 
-              text: 'Retry', 
-              onPress: () => requestLocationPermissionOnMount() 
+            {
+              text: 'Retry',
+              onPress: () => {
+                setLocationLoading(true);
+                requestLocationPermissionOnMount();
+              }
             },
-            { 
-              text: 'Continue Without Location', 
+            {
+              text: 'Continue Without Location',
               style: 'cancel',
               onPress: () => {
                 setPickupLocation('');
@@ -267,6 +268,25 @@ export default function HomeScreen() {
       }
     } catch (error) {
       console.error('Error requesting location permission on mount:', error);
+      setLocationLoading(false);
+      showCustomAlert(
+        'Location Error',
+        'Failed to request location permission. Please check your device settings.',
+        'error',
+        [
+          {
+            text: 'Retry',
+            onPress: () => {
+              setLocationLoading(true);
+              requestLocationPermissionOnMount();
+            }
+          },
+          {
+            text: 'Close',
+            style: 'cancel'
+          }
+        ]
+      );
     }
   };
 
