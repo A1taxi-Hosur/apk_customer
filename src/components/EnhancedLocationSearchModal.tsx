@@ -9,6 +9,7 @@ import {
   FlatList,
   ActivityIndicator,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import { Search, MapPin, Clock, Star, X, Navigation } from 'lucide-react-native';
 import * as Location from 'expo-location';

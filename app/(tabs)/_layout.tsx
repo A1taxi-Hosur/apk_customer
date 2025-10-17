@@ -1,17 +1,10 @@
 import { Tabs } from 'expo-router';
 import { Chrome as Home, MapPin, User, Clock } from 'lucide-react-native';
-import { useAuth } from '../../src/contexts/AuthContext';
 import RideNotificationListener from '../../src/components/RideNotificationListener';
 import NotificationBanner from '../../src/components/NotificationBanner';
 import TripCompletionNotification from '../../src/components/TripCompletionNotification';
 
 export default function TabLayout() {
-  const { user } = useAuth();
-
-  if (!user) {
-    return null;
-  }
-
   return (
     <>
       <RideNotificationListener />
