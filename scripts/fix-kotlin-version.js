@@ -111,7 +111,78 @@ try {
   console.error('❌ Error patching ExpoModulesCorePlugin.gradle:', error.message);
 }
 
-// Create helper script for patching app/build.gradle after prebuild
+// STEP 5: Patch Expo's prebuild config templates to remove enableBundleCompression
+// This is the SOURCE of the problem - Expo generates build.gradle with this property
+const expoConfigFiles = [
+  'node_modules/@expo/config-plugins/build/plugins/android-plugins.js',
+  'node_modules/@expo/prebuild-config/build/plugins/unversioned/expo-build-properties.js'
+];
+
+for (const configFile of expoConfigFiles) {
+  const filePath = path.join(__dirname, '..', configFile);
+
+  try {
+    if (fs.existsSync(filePath)) {
+      console.log(`📝 Patching ${configFile}...`);
+      let content = fs.readFileSync(filePath, 'utf8');
+      const originalContent = content;
+
+      // Remove references to enableBundleCompression
+      content = content.replace(/enableBundleCompression/g, 'REMOVED_enableBundleCompression');
+      content = content.replace(/bundleCommand/g, 'REMOVED_bundleCommand');
+
+      if (content !== originalContent) {
+        fs.writeFileSync(filePath, content, 'utf8');
+        console.log(`✅ Successfully patched ${configFile}`);
+        patchedCount++;
+      }
+    }
+  } catch (error) {
+    console.error(`❌ Error patching ${configFile}:`, error.message);
+  }
+}
+
+// STEP 6: Find and patch ALL Expo config files that might generate app/build.gradle
+const expoConfigDir = path.join(__dirname, '..', 'node_modules', '@expo');
+try {
+  const findAndPatchFiles = (dir) => {
+    if (!fs.existsSync(dir)) return;
+
+    const files = fs.readdirSync(dir, { withFileTypes: true });
+    for (const file of files) {
+      const fullPath = path.join(dir, file.name);
+
+      if (file.isDirectory()) {
+        findAndPatchFiles(fullPath);
+      } else if (file.name.endsWith('.js') || file.name.endsWith('.ts')) {
+        try {
+          let content = fs.readFileSync(fullPath, 'utf8');
+          if (content.includes('enableBundleCompression') || content.includes('bundleCommand')) {
+            console.log(`📝 Patching ${fullPath.replace(path.join(__dirname, '..'), '')}...`);
+            const originalContent = content;
+
+            content = content.replace(/enableBundleCompression/g, 'REMOVED_enableBundleCompression');
+            content = content.replace(/bundleCommand/g, 'REMOVED_bundleCommand');
+
+            if (content !== originalContent) {
+              fs.writeFileSync(fullPath, content, 'utf8');
+              patchedCount++;
+            }
+          }
+        } catch (error) {
+          // Skip files that can't be read
+        }
+      }
+    }
+  };
+
+  console.log('🔍 Searching for Expo config files that generate enableBundleCompression...');
+  findAndPatchFiles(expoConfigDir);
+} catch (error) {
+  console.error('❌ Error scanning Expo config:', error.message);
+}
+
+// Create helper script for patching app/build.gradle after prebuild (if still needed)
 const helperScriptPath = path.join(__dirname, 'patch-build-gradle.js');
 const helperScript = `#!/usr/bin/env node
 const fs = require('fs');
