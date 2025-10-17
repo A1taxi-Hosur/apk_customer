@@ -42,8 +42,7 @@
       "expo-font",
       "expo-web-browser",
       "expo-location",
-      "expo-notifications",
-      "./plugins/withRemoveBundleCompression.js"
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true
