@@ -100,60 +100,91 @@ export default function VerifyOTPScreen() {
         console.log('✅ Customer ID (integer):', data.customerId);
         console.log('✅ Session received:', JSON.stringify(data.session, null, 2));
 
-        // Set the session directly in Supabase client
-        console.log('🔐 Setting Supabase session...');
-        const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token,
-        });
+        try {
+          // Set the session directly in Supabase client
+          console.log('🔐 Setting Supabase session...');
+          const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+            access_token: data.session.access_token,
+            refresh_token: data.session.refresh_token,
+          });
 
-        if (sessionError) {
-          console.error('❌ Session error:', sessionError);
-          Alert.alert('Error', 'Failed to create session: ' + sessionError.message);
+          if (sessionError) {
+            console.error('❌ Session error:', sessionError);
+            Alert.alert('Error', 'Failed to create session: ' + sessionError.message);
+            setLoading(false);
+            return;
+          }
+
+          if (!sessionData?.session) {
+            console.error('❌ No session returned');
+            Alert.alert('Error', 'Failed to create session');
+            setLoading(false);
+            return;
+          }
+
+          console.log('✅ Supabase session set successfully:', {
+            userId: sessionData.user?.id,
+            email: sessionData.user?.email,
+            expiresAt: sessionData.session.expires_at ? new Date(sessionData.session.expires_at * 1000).toISOString() : 'unknown'
+          });
+
+          // Store user data in AsyncStorage
+          try {
+            await AsyncStorage.setItem('customerId', data.customerId.toString());
+            await AsyncStorage.setItem('customerName', data.user?.user_metadata?.full_name || name || 'User');
+            await AsyncStorage.setItem('customerPhone', data.user?.user_metadata?.phone_number || phoneNumber || '');
+            await AsyncStorage.setItem('isAuthenticated', 'true');
+            console.log('✅ AsyncStorage data saved');
+          } catch (storageError) {
+            console.error('⚠️ AsyncStorage error:', storageError);
+            // Don't fail the login if storage fails
+          }
+
+          const userData = {
+            id: data.userId,
+            email: data.user?.email || `${phoneNumber}@phone.a1taxi.local`,
+            full_name: data.user?.user_metadata?.full_name || name || 'User',
+            phone_number: data.user?.user_metadata?.phone_number || phoneNumber,
+            role: 'customer',
+            customer_id: data.userId
+          };
+
+          console.log('✅ Setting authenticated user in context with UUID:', userData.id);
+          setAuthenticatedUser(userData);
+
+          console.log('✅ Customer data saved, navigating to home...');
+
+          // Use setTimeout to ensure state updates complete before navigation
+          setTimeout(() => {
+            setLoading(false);
+            router.replace('/(tabs)');
+          }, 100);
+        } catch (innerError) {
+          console.error('❌ Error during session setup:', innerError);
+          Alert.alert('Error', 'Failed to complete login. Please try again.');
           setLoading(false);
-          return;
         }
-
-        if (!sessionData.session) {
-          console.error('❌ No session returned');
-          Alert.alert('Error', 'Failed to create session');
-          setLoading(false);
-          return;
-        }
-
-        console.log('✅ Supabase session set successfully:', {
-          userId: sessionData.user.id,
-          email: sessionData.user.email,
-          expiresAt: new Date(sessionData.session.expires_at! * 1000).toISOString()
-        });
-
-        await AsyncStorage.setItem('customerId', data.customerId.toString());
-        await AsyncStorage.setItem('customerName', data.user.user_metadata?.full_name || 'User');
-        await AsyncStorage.setItem('customerPhone', data.user.user_metadata?.phone_number || phoneNumber);
-        await AsyncStorage.setItem('isAuthenticated', 'true');
-
-        const userData = {
-          id: data.userId,
-          email: data.user.email || `${phoneNumber}@phone.a1taxi.local`,
-          full_name: data.user.user_metadata?.full_name || 'User',
-          phone_number: data.user.user_metadata?.phone_number || phoneNumber,
-          role: 'customer',
-          customer_id: data.userId
-        };
-
-        console.log('✅ Setting authenticated user in context with UUID:', userData.id);
-        setAuthenticatedUser(userData);
-
-        console.log('✅ Customer data saved, navigating to home...');
-        setLoading(false);
-        router.replace('/(tabs)');
       } else {
-        Alert.alert('Error', 'Verification failed');
+        console.error('❌ Invalid response data:', data);
+        Alert.alert('Error', data.error || 'Verification failed');
         setLoading(false);
       }
     } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'An error occurred during verification');
+      console.error('❌ Error during OTP verification:', error);
+      console.error('❌ Error details:', {
+        name: error?.name,
+        message: error?.message,
+        stack: error?.stack
+      });
+
+      let errorMessage = 'An error occurred during verification';
+      if (error?.message?.includes('Network request failed')) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      Alert.alert('Error', errorMessage);
       setLoading(false);
     }
   };

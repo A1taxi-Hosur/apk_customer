@@ -9,17 +9,24 @@ export default function AuthNavigator({ children }: { children: React.ReactNode 
   const router = useRouter();
 
   React.useEffect(() => {
-    console.log('🔍 AuthNavigator - checking auth state:', { 
-      user: !!user, 
-      loading, 
+    console.log('🔍 AuthNavigator - checking auth state:', {
+      user: !!user,
+      loading,
       segments: segments.join('/'),
       userEmail: user?.email,
       userRole: user?.role
     });
-    
+
     if (loading) return;
 
     const inAuthGroup = segments[0] === 'auth';
+    const onVerifyOTP = segments[0] === 'auth' && segments[1] === 'verify-otp';
+
+    // Don't redirect users while they're on the verify-otp screen
+    if (onVerifyOTP) {
+      console.log('🔐 User on verify-otp screen, skipping navigation');
+      return;
+    }
 
     if (!user && !inAuthGroup) {
       // User is not authenticated and not on auth screen, redirect to login
@@ -28,7 +35,7 @@ export default function AuthNavigator({ children }: { children: React.ReactNode 
     } else if (user && inAuthGroup) {
       // User is authenticated but on auth screen, redirect to tabs
       console.log('🔄 User authenticated, checking if should redirect to tabs');
-      
+
       // Only redirect if user has proper role and profile
       if (user.role === 'customer') {
         console.log('✅ Customer authenticated, redirecting to tabs');
