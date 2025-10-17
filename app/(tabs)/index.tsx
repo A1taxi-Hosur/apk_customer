@@ -445,12 +445,26 @@ export default function HomeScreen() {
 
   const getCurrentLocation = async () => {
     try {
-      const locationWithAddress = await enhancedLocationService.getCurrentLocationWithAddress();
-      
+      console.log('📍 [HOME] Starting location fetch...');
+
+      // Add timeout wrapper to prevent infinite loading
+      const locationPromise = enhancedLocationService.getCurrentLocationWithAddress();
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Location request timed out after 15 seconds')), 15000)
+      );
+
+      const locationWithAddress = await Promise.race([locationPromise, timeoutPromise]) as any;
+
       if (!locationWithAddress) {
         throw new Error('Unable to get current location');
       }
-      
+
+      console.log('✅ [HOME] Location obtained:', {
+        lat: locationWithAddress.coords.latitude,
+        lng: locationWithAddress.coords.longitude,
+        address: locationWithAddress.address
+      });
+
       // Convert to Expo Location format for compatibility
       const expoLocation: Location.LocationObject = {
         coords: {
@@ -464,7 +478,7 @@ export default function HomeScreen() {
         },
         timestamp: locationWithAddress.timestamp,
       };
-      
+
       setCurrentLocation(expoLocation);
       setPickupLocation(locationWithAddress.address);
       setPickupCoords({
@@ -478,21 +492,26 @@ export default function HomeScreen() {
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       });
-      
+
+      console.log('✅ [HOME] Location state updated successfully');
+
     } catch (error) {
-      console.error('Error getting location:', error);
-      
+      console.error('❌ [HOME] Error getting location:', error);
+
       showCustomAlert(
         'Location Error',
-        'Unable to get your current location. Please allow location access in your browser and try again.',
+        `Unable to get your current location. ${error.message || 'Please allow location access and try again.'}`,
         'error',
         [
-          { 
-            text: 'Retry', 
-            onPress: () => getCurrentLocation() 
+          {
+            text: 'Retry',
+            onPress: () => {
+              setLocationLoading(true);
+              getCurrentLocation();
+            }
           },
-          { 
-            text: 'Use Manual Location', 
+          {
+            text: 'Use Manual Location',
             style: 'cancel',
             onPress: () => {
               setPickupLocation('');
@@ -503,6 +522,7 @@ export default function HomeScreen() {
       );
     } finally {
       setLocationLoading(false);
+      console.log('📍 [HOME] Location loading state set to false');
     }
   };
 

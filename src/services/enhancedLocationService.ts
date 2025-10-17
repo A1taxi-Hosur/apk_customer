@@ -116,6 +116,8 @@ class EnhancedLocationService {
   async getCurrentLocationWithAddress(): Promise<LocationWithAddress | null> {
     try {
       console.log('🔍 Enhanced Location Service: Getting current location with address...');
+      console.log('🔍 Platform:', Platform.OS);
+
       const location = await this.getCurrentLocation();
       if (!location) {
         console.error('❌ Enhanced Location Service: Failed to get location');
@@ -128,6 +130,7 @@ class EnhancedLocationService {
         accuracy: location.coords.accuracy
       });
 
+      console.log('🗺️ Enhanced Location Service: Starting reverse geocoding...');
       const address = await this.reverseGeocodeWithGoogle(
         location.coords.latitude,
         location.coords.longitude
@@ -141,7 +144,7 @@ class EnhancedLocationService {
         timestamp: location.timestamp,
       };
     } catch (error) {
-      console.error('Error getting location with address:', error);
+      console.error('❌ Enhanced Location Service: Error in getCurrentLocationWithAddress:', error);
       return null;
     }
   }
@@ -330,20 +333,25 @@ class EnhancedLocationService {
   async reverseGeocodeWithGoogle(latitude: number, longitude: number): Promise<string> {
     try {
       console.log('🗺️ Reverse geocoding coordinates:', { latitude, longitude });
-      
+
       try {
-        // Use Google Maps Geocoding API through proxy for accurate address
-        const address = await googleMapsService.reverseGeocode(latitude, longitude);
-        
+        // Add timeout to prevent hanging on geocoding
+        const geocodePromise = googleMapsService.reverseGeocode(latitude, longitude);
+        const timeoutPromise = new Promise<string>((_, reject) =>
+          setTimeout(() => reject(new Error('Geocoding timed out after 10 seconds')), 10000)
+        );
+
+        const address = await Promise.race([geocodePromise, timeoutPromise]);
+
         if (address && !address.startsWith('Location (')) {
           console.log('✅ Geocoded address:', address);
           return address;
         }
-        
+
         throw new Error('No valid address from geocoding API');
       } catch (geocodeError) {
         console.warn('⚠️ Google geocoding failed, using coordinate fallback:', geocodeError.message);
-        
+
         // Fallback to coordinate display
         const fallbackAddress = `Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
         console.log('⚠️ Using fallback address:', fallbackAddress);
