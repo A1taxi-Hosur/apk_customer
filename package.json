@@ -13,9 +13,11 @@
     "build:android": "EAS_NO_VCS=1 eas build --platform android",
     "build:android:preview": "EAS_NO_VCS=1 eas build --platform android --profile preview"
   },
-  "resolutions": {
-    "expo-constants": "17.1.7",
-    "expo-linking": "7.1.7"
+  "overrides": {
+    "expo-router": {
+      "expo-constants": "~17.1.3",
+      "expo-linking": "~7.1.3"
+    }
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.1",
