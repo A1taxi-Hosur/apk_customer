@@ -7,7 +7,6 @@
     "scheme": "a1taxi",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
-    "icon": "./assets/images/icon.png",
     "ios": {
       "supportsTablet": true
     },
@@ -24,11 +23,7 @@
           "apiKey": "AIzaSyBIHJUk4DuAG7tjp_gIdNhUJdpBKN1eM2Q"
         }
       },
-      "package": "com.a1taxi.a1taxicustomer",
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#ffffff"
-      }
+      "package": "com.a1taxi.a1taxicustomer"
     },
     "web": {
       "bundler": "metro",
