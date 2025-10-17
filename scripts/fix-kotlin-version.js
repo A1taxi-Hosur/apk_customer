@@ -111,6 +111,37 @@ try {
   console.error('❌ Error patching ExpoModulesCorePlugin.gradle:', error.message);
 }
 
+// Create helper script for patching app/build.gradle after prebuild
+const helperScriptPath = path.join(__dirname, 'patch-build-gradle.js');
+const helperScript = `#!/usr/bin/env node
+const fs = require('fs');
+const path = require('path');
+
+const appBuildGradle = path.join(__dirname, '..', 'android', 'app', 'build.gradle');
+
+if (fs.existsSync(appBuildGradle)) {
+  console.log('📝 Patching android/app/build.gradle for React Native 0.76.x...');
+  let content = fs.readFileSync(appBuildGradle, 'utf8');
+
+  // Remove enableBundleCompression (not supported in RN 0.76+)
+  content = content.replace(/\\s*enableBundleCompression\\s*=\\s*false.*\\n?/g, '');
+  content = content.replace(/\\s*bundleCommand\\s*=.*\\n?/g, '');
+
+  fs.writeFileSync(appBuildGradle, content, 'utf8');
+  console.log('✅ app/build.gradle patched successfully');
+} else {
+  console.log('⚠️  android/app/build.gradle not found');
+}
+`;
+
+try {
+  fs.writeFileSync(helperScriptPath, helperScript, 'utf8');
+  fs.chmodSync(helperScriptPath, '755');
+  patchedCount++;
+} catch (error) {
+  console.error('❌ Error creating helper script:', error.message);
+}
+
 if (patchedCount > 0) {
   console.log(`✅ Successfully patched ${patchedCount} file(s) with Kotlin 2.0.21`);
 } else {
