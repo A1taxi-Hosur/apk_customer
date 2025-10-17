@@ -16,8 +16,7 @@
       "env": {
         "KOTLIN_VERSION": "2.0.21",
         "KSP_VERSION": "2.0.21-1.0.27"
-      },
-      "postInstall": "./eas-hooks/eas-build-post-install.sh"
+      }
     },
     "production": {
       "android": {
@@ -26,8 +25,7 @@
       "env": {
         "KOTLIN_VERSION": "2.0.21",
         "KSP_VERSION": "2.0.21-1.0.27"
-      },
-      "postInstall": "./eas-hooks/eas-build-post-install.sh"
+      }
     }
   },
   "submit": {
