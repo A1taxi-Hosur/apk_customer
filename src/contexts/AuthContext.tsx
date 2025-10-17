@@ -192,6 +192,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('📱 Supabase URL:', supabaseUrl);
       console.log('📱 Anon Key exists:', !!supabaseKey);
 
+      if (!supabaseUrl) {
+        throw new Error('Supabase URL is not configured. Please check your environment variables.');
+      }
+
+      if (!supabaseKey) {
+        throw new Error('Supabase API key is not configured. Please check your environment variables.');
+      }
+
       const requestUrl = `${supabaseUrl}/functions/v1/send-otp`;
       console.log('📱 Request URL:', requestUrl);
 
@@ -228,8 +236,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { error: null, otp: data.devOtp, smsSent: data.smsSent, smsError: data.smsError };
     } catch (error) {
       console.error('📱 ❌ Error sending OTP:', error);
-      console.error('📱 Error details:', error);
-      return { error: error as Error };
+      console.error('📱 Error name:', error?.name);
+      console.error('📱 Error message:', error?.message);
+
+      // Provide more specific error messages
+      let errorMessage = 'Failed to send OTP';
+      if (error?.message?.includes('Network request failed')) {
+        errorMessage = 'Network error. Please check your internet connection and try again.';
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      return { error: new Error(errorMessage) };
     }
   };
 
