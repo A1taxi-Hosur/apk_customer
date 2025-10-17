@@ -902,8 +902,8 @@ export default function DriverSearchScreen() {
               initialRegion={{
                 latitude: rideDetails.pickupLatitude || 12.7402,
                 longitude: rideDetails.pickupLongitude || 77.8240,
-                latitudeDelta: 0.015,
-                longitudeDelta: 0.015,
+                latitudeDelta: 0.05, // Show 5-6 km area
+                longitudeDelta: 0.05,
               }}
               pickupCoords={rideDetails.pickupLatitude && rideDetails.pickupLongitude ? {
                 latitude: rideDetails.pickupLatitude,

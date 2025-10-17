@@ -490,8 +490,8 @@ export default function HomeScreen() {
       setMapRegion({
         latitude: locationWithAddress.coords.latitude,
         longitude: locationWithAddress.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
+        latitudeDelta: 0.05, // Show 5-6 km area around location
+        longitudeDelta: 0.05,
       });
 
       console.log('✅ [HOME] Location state updated successfully');

@@ -6,19 +6,19 @@ if (!GOOGLE_MAPS_API_KEY) {
   console.warn('⚠️ Google Maps API key not found in environment variables. Please check your .env file.');
 }
 
-// Default region for fallback only
+// Default region for fallback - shows Hosur city area
 export const DEFAULT_REGION = {
-  latitude: 12.7402, // Correct Hosur coordinates
+  latitude: 12.7402, // Hosur, Tamil Nadu, India
   longitude: 77.8240,
-  latitudeDelta: 0.01,
-  longitudeDelta: 0.01,
+  latitudeDelta: 0.15, // Shows approximately 15-20 km area
+  longitudeDelta: 0.15,
 };
 
 export const HOSUR_COORDINATES = {
   latitude: 12.7402,
   longitude: 77.8240,
-  latitudeDelta: 0.01,
-  longitudeDelta: 0.01,
+  latitudeDelta: 0.15,
+  longitudeDelta: 0.15,
 };
 
 export const HOSUR_LANDMARKS = [

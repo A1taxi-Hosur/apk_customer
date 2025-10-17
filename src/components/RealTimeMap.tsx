@@ -26,8 +26,8 @@ export default function RealTimeMap({
   const [mapRegion, setMapRegion] = useState({
     latitude: pickupCoords.latitude,
     longitude: pickupCoords.longitude,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
   });
 
   useEffect(() => {
@@ -86,8 +86,8 @@ export default function RealTimeMap({
       mapRef.current.animateToRegion({
         latitude: driverLocation.latitude,
         longitude: driverLocation.longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
+        latitudeDelta: 0.03,
+        longitudeDelta: 0.03,
       });
     }
   };
@@ -113,8 +113,8 @@ export default function RealTimeMap({
         initialRegion={{
           latitude: pickupCoords.latitude,
           longitude: pickupCoords.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
         }}
         pickupCoords={pickupCoords}
         destinationCoords={destinationCoords}

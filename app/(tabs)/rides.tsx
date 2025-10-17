@@ -590,10 +590,10 @@ export default function RidesScreen() {
                   })}
                   <EnhancedGoogleMapView
                     initialRegion={{
-                      latitude: ride.pickup_latitude || 12.9716,
-                      longitude: ride.pickup_longitude || 77.5946,
-                      latitudeDelta: 0.02,
-                      longitudeDelta: 0.02,
+                      latitude: ride.pickup_latitude || 12.7402,
+                      longitude: ride.pickup_longitude || 77.8240,
+                      latitudeDelta: 0.05,
+                      longitudeDelta: 0.05,
                     }}
                     pickupCoords={{
                       latitude: ride.pickup_latitude,
