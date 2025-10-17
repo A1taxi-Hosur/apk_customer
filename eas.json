@@ -12,11 +12,19 @@
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "KOTLIN_VERSION": "2.0.21",
+        "KSP_VERSION": "2.0.21-1.0.27"
       }
     },
     "production": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "KOTLIN_VERSION": "2.0.21",
+        "KSP_VERSION": "2.0.21-1.0.27"
       }
     }
   },
