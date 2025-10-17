@@ -1,130 +1,120 @@
 #!/usr/bin/env node
 
 /**
- * FORCEFUL Post-install script to fix Kotlin version for EAS builds
- * This script patches Expo's autolinking plugin to:
- * 1. Add missing Kotlin 1.9.24 mapping (if needed)
- * 2. Replace any 1.9.x references with 2.0.21
- * 3. Ensure KSP version is 2.0.21-1.0.27
+ * CRITICAL Post-install script to fix Kotlin version for EAS builds
+ * This script patches React Native and Expo's Kotlin version references
+ * The issue: React Native 0.76.5 uses Kotlin 1.9.24 in libs.versions.toml
+ * But Expo SDK 53 doesn't support 1.9.24, causing "Key 1.9.24 is missing in the map" error
  */
 
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔧 FORCEFULLY fixing Kotlin version for Expo build...');
+console.log('🔧 CRITICAL: Patching React Native Kotlin version from 1.9.24 to 2.0.21...');
 
-// Path to the Expo autolinking plugin Constants.kt file
+// CRITICAL: These TOML files define the Kotlin version for React Native
+const tomlFilesToPatch = [
+  'node_modules/@react-native/gradle-plugin/gradle/libs.versions.toml',
+  'node_modules/react-native/gradle/libs.versions.toml'
+];
+
+let patchedCount = 0;
+
+for (const tomlFile of tomlFilesToPatch) {
+  const filePath = path.join(__dirname, '..', tomlFile);
+
+  try {
+    if (fs.existsSync(filePath)) {
+      console.log(`📝 Patching ${tomlFile}...`);
+      let content = fs.readFileSync(filePath, 'utf8');
+      const originalContent = content;
+
+      // Replace Kotlin 1.9.24 with 2.0.21 in TOML format
+      content = content.replace(/kotlin\s*=\s*["']1\.9\.24["']/g, 'kotlin = "2.0.21"');
+
+      if (content !== originalContent) {
+        fs.writeFileSync(filePath, content, 'utf8');
+        console.log(`✅ Successfully patched ${tomlFile}`);
+        patchedCount++;
+      } else {
+        console.log(`ℹ️  ${tomlFile} already correct or pattern not found`);
+      }
+    } else {
+      console.log(`⚠️  ${tomlFile} not found`);
+    }
+  } catch (error) {
+    console.error(`❌ Error patching ${tomlFile}:`, error.message);
+  }
+}
+
+// Also patch Expo modules that reference 1.9.24
+const expoFilesToPatch = [
+  'node_modules/expo-modules-core/expo-module-gradle-plugin/build.gradle.kts',
+  'node_modules/expo-modules-autolinking/android/expo-gradle-plugin/build.gradle.kts',
+  'node_modules/expo-modules-autolinking/android/expo-gradle-plugin/expo-autolinking-plugin-shared/build.gradle.kts'
+];
+
+for (const gradleFile of expoFilesToPatch) {
+  const filePath = path.join(__dirname, '..', gradleFile);
+
+  try {
+    if (fs.existsSync(filePath)) {
+      console.log(`📝 Patching ${gradleFile}...`);
+      let content = fs.readFileSync(filePath, 'utf8');
+      const originalContent = content;
+
+      // Replace Kotlin version in build.gradle.kts files
+      content = content.replace(/version\s+"1\.9\.24"/g, 'version "2.0.21"');
+      content = content.replace(/version\s+'1\.9\.24'/g, "version '2.0.21'");
+      content = content.replace(/:kotlin-gradle-plugin:1\.9\.24/g, ':kotlin-gradle-plugin:2.0.21');
+
+      if (content !== originalContent) {
+        fs.writeFileSync(filePath, content, 'utf8');
+        console.log(`✅ Successfully patched ${gradleFile}`);
+        patchedCount++;
+      }
+    }
+  } catch (error) {
+    console.error(`❌ Error patching ${gradleFile}:`, error.message);
+  }
+}
+
+// Patch the Constants.kt if it exists
 const constantsPath = path.join(
   __dirname,
   '..',
   'node_modules',
-  'expo-modules-autolinking',
+  'expo-modules-core',
   'android',
-  'expo-gradle-plugin',
-  'expo-autolinking-plugin-shared',
-  'src',
-  'main',
-  'kotlin',
-  'expo',
-  'modules',
-  'plugin',
-  'shared',
-  'Constants.kt'
-);
-
-// Path to the Expo root project plugin
-const rootProjectPath = path.join(
-  __dirname,
-  '..',
-  'node_modules',
-  'expo-modules-autolinking',
-  'android',
-  'expo-gradle-plugin',
-  'expo-autolinking-plugin',
-  'src',
-  'main',
-  'kotlin',
-  'expo',
-  'modules',
-  'plugin'
+  'ExpoModulesCorePlugin.gradle'
 );
 
 try {
-  // Fix Constants.kt if it exists
   if (fs.existsSync(constantsPath)) {
-    console.log('📝 Found Constants.kt, patching...');
+    console.log('📝 Patching ExpoModulesCorePlugin.gradle...');
     let content = fs.readFileSync(constantsPath, 'utf8');
+    const originalContent = content;
 
-    // Add missing 1.9.24 mapping if the map exists
-    if (content.includes('KOTLIN_TO_KSP_VERSION_MAP') || content.includes('kotlinToKspVersionMap')) {
-      // Replace 1.9.x versions with 2.0.21
-      content = content.replace(/["']1\.9\.\d+["']\s*to\s*["'][^"']+["']/g, '"2.0.21" to "2.0.21-1.0.27"');
-
-      // If the map doesn't have 1.9.24, add it
-      if (!content.includes('"1.9.24"')) {
-        content = content.replace(
-          /(KOTLIN_TO_KSP_VERSION_MAP.*?=.*?mapOf\()/s,
-          '$1\n    "1.9.24" to "2.0.21-1.0.27",'
-        );
-      }
-
-      fs.writeFileSync(constantsPath, content, 'utf8');
-      console.log('✅ Constants.kt patched successfully');
-    } else {
-      console.log('ℹ️  No version map found in Constants.kt');
-    }
-  } else {
-    console.log('⚠️  Constants.kt not found at expected path');
-  }
-
-  // Find and patch all Kotlin files that reference versions
-  const findKotlinFiles = (dir) => {
-    if (!fs.existsSync(dir)) return [];
-
-    const files = [];
-    const items = fs.readdirSync(dir);
-
-    for (const item of items) {
-      const fullPath = path.join(dir, item);
-      const stat = fs.statSync(fullPath);
-
-      if (stat.isDirectory()) {
-        files.push(...findKotlinFiles(fullPath));
-      } else if (item.endsWith('.kt')) {
-        files.push(fullPath);
-      }
-    }
-
-    return files;
-  };
-
-  if (fs.existsSync(rootProjectPath)) {
-    console.log('📝 Scanning for Kotlin files with version references...');
-    const kotlinFiles = findKotlinFiles(rootProjectPath);
-
-    for (const file of kotlinFiles) {
-      let content = fs.readFileSync(file, 'utf8');
-      const originalContent = content;
-
-      // Replace any hardcoded 1.9.x versions with 2.0.21
-      content = content.replace(/["']1\.9\.\d+["']/g, '"2.0.21"');
-
-      // Replace KSP versions to match
-      content = content.replace(/["']1\.9\.\d+-\d+\.\d+\.\d+["']/g, '"2.0.21-1.0.27"');
+    // Add or update the 1.9.24 mapping
+    if (content.includes('1.9.24')) {
+      content = content.replace(/"1\.9\.24":\s*"[^"]+"/g, '"1.9.24": "2.0.21-1.0.27"');
+      content = content.replace(/'1\.9\.24':\s*'[^']+'/g, "'1.9.24': '2.0.21-1.0.27'");
 
       if (content !== originalContent) {
-        fs.writeFileSync(file, content, 'utf8');
-        console.log(`✅ Patched: ${path.relative(rootProjectPath, file)}`);
+        fs.writeFileSync(constantsPath, content, 'utf8');
+        console.log('✅ Successfully patched ExpoModulesCorePlugin.gradle');
+        patchedCount++;
       }
     }
   }
-
-  console.log('✅ Kotlin version FORCEFULLY set to 2.0.21 everywhere');
 } catch (error) {
-  console.error('❌ Error patching Kotlin version:', error.message);
-  // Don't fail the install if patching fails - EAS hooks will handle it
-  console.log('⚠️  Will rely on EAS hooks to set Kotlin version');
-  process.exit(0);
+  console.error('❌ Error patching ExpoModulesCorePlugin.gradle:', error.message);
 }
 
-console.log('✅ Post-install script completed successfully');
+if (patchedCount > 0) {
+  console.log(`✅ Successfully patched ${patchedCount} file(s) with Kotlin 2.0.21`);
+} else {
+  console.log('⚠️  No files were patched - they may already be correct');
+}
+
+console.log('✅ Post-install script completed');
