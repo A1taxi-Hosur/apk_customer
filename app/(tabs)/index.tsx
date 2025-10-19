@@ -12,13 +12,13 @@ import {
   Modal,
   Platform,
 } from 'react-native';
-import Animated from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MapPin, Navigation, ArrowUpDown, Menu, Clock, Plane } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import HosurMapView from '../../src/components/HosurMapView';
+import DraggableBottomSheet from '../../src/components/DraggableBottomSheet';
 import EnhancedLocationSearchModal from '../../src/components/EnhancedLocationSearchModal';
 import CustomAlert from '../../src/components/CustomAlert';
 import { fareCalculator, FareBreakdown, FareConfig } from '../../src/services/fareCalculator';
@@ -1320,23 +1320,8 @@ export default function HomeScreen() {
         />
       </View>
 
-      {/* Bottom Sheet - Draggable */}
-      <Animated.View
-        style={[
-          styles.bottomSheet,
-          {
-            maxHeight: height * 0.85,
-          }
-        ]}
-      >
-        <View style={styles.dragHandle} />
-
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollViewContent}
-          showsVerticalScrollIndicator={false}
-          bounces={true}
-        >
+      {/* Draggable Bottom Sheet */}
+      <DraggableBottomSheet>
           {/* Location inputs */}
           <View style={styles.locationInputs}>
             <View style={styles.locationDots}>
@@ -1503,8 +1488,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
           )}
-        </ScrollView>
-      </Animated.View>
+      </DraggableBottomSheet>
 
       {/* Location search modals */}
       <EnhancedLocationSearchModal
@@ -1551,40 +1535,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-  },
-  map: {
-    flex: 1,
-  },
-  bottomSheet: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    maxHeight: height * 0.85,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingTop: 8,
-    elevation: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollViewContent: {
-    paddingBottom: 40,
-  },
-  dragHandle: {
-    width: 40,
-    height: 5,
-    backgroundColor: '#D1D5DB',
-    borderRadius: 3,
-    alignSelf: 'center',
-    marginBottom: 16,
-    marginTop: 8,
   },
   locationInputs: {
     flexDirection: 'row',

@@ -27,49 +27,19 @@ export default function AnimatedDriverRoute({
 }: AnimatedDriverRouteProps) {
   const mapRef = useRef<MapView>(null);
   const [routeCoordinates, setRouteCoordinates] = useState<any[]>([]);
-  const [animatedDriverPosition, setAnimatedDriverPosition] = useState(driverLocation);
-  const animationProgress = useSharedValue(0);
+  const [currentDriverPosition, setCurrentDriverPosition] = useState(driverLocation);
+  const prevDriverLocationRef = useRef(driverLocation);
 
-  // Animate driver movement along the route
+  // Update driver position with smooth animation when location changes
   useEffect(() => {
-    if (routeCoordinates.length > 0) {
-      // Interpolate driver position along route
-      const totalPoints = routeCoordinates.length;
-      const currentIndex = Math.floor((animationProgress.value / 100) * (totalPoints - 1));
+    const hasLocationChanged =
+      Math.abs(driverLocation.latitude - prevDriverLocationRef.current.latitude) > 0.0001 ||
+      Math.abs(driverLocation.longitude - prevDriverLocationRef.current.longitude) > 0.0001;
 
-      if (currentIndex < totalPoints) {
-        setAnimatedDriverPosition(routeCoordinates[currentIndex]);
-      }
-    }
-  }, [animationProgress.value, routeCoordinates]);
-
-  // Update driver position and animate when it changes
-  useEffect(() => {
-    if (routeCoordinates.length > 0) {
-      // Find closest point on route to new driver location
-      let closestIndex = 0;
-      let minDistance = Number.MAX_VALUE;
-
-      routeCoordinates.forEach((coord, index) => {
-        const distance = getDistance(
-          driverLocation.latitude,
-          driverLocation.longitude,
-          coord.latitude,
-          coord.longitude
-        );
-
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestIndex = index;
-        }
-      });
-
-      // Animate to the new position
-      const progress = (closestIndex / (routeCoordinates.length - 1)) * 100;
-      animationProgress.value = withTiming(progress, {
-        duration: 2000,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
+    if (hasLocationChanged) {
+      console.log('🚗 [AnimatedRoute] Driver location updated:', driverLocation);
+      setCurrentDriverPosition(driverLocation);
+      prevDriverLocationRef.current = driverLocation;
     }
   }, [driverLocation]);
 
@@ -88,8 +58,7 @@ export default function AnimatedDriverRoute({
   const handleRouteReady = (result: any) => {
     if (result.coordinates && result.coordinates.length > 0) {
       setRouteCoordinates(result.coordinates);
-      setAnimatedDriverPosition(result.coordinates[0]);
-      animationProgress.value = 0;
+      console.log('🗺️ [AnimatedRoute] Route ready with', result.coordinates.length, 'points');
     }
     onRouteReady?.(result);
   };
@@ -131,7 +100,7 @@ export default function AnimatedDriverRoute({
 
         {/* Animated driver marker */}
         <Marker
-          coordinate={animatedDriverPosition}
+          coordinate={currentDriverPosition}
           title="Driver"
           rotation={driverHeading}
           anchor={{ x: 0.5, y: 0.5 }}
