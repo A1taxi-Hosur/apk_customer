@@ -42,6 +42,12 @@
           "root": "./app"
         }
       ],
+      [
+        "react-native-maps",
+        {
+          "googleMapsApiKey": "AIzaSyBIHJUk4DuAG7tjp_gIdNhUJdpBKN1eM2Q"
+        }
+      ],
       "expo-font",
       "expo-web-browser",
       "expo-location",
