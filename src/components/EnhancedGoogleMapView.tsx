@@ -54,6 +54,7 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
   const [userLocation, setUserLocation] = useState<any>(null);
   const [routeCoordinates, setRouteCoordinates] = useState<any[]>([]);
   const [isMapReady, setIsMapReady] = useState(false);
+  const [hasAnimatedToRegion, setHasAnimatedToRegion] = useState(false);
   const driverMarkerRef = useRef<any>(null);
   const previousDriverLocation = useRef<any>(null);
 
@@ -288,18 +289,38 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
 
   const handleMapReady = () => {
     console.warn('🗺️ [MAP] ===== MAP IS READY =====');
+    console.warn('🗺️ [MAP] mapRegion:', JSON.stringify(mapRegion));
     console.warn('🗺️ [MAP] pickupCoords:', JSON.stringify(pickupCoords));
     console.warn('🗺️ [MAP] destinationCoords:', JSON.stringify(destinationCoords));
     console.warn('🗺️ [MAP] userLocation:', JSON.stringify(userLocation));
+    console.warn('🗺️ [MAP] hasAnimatedToRegion:', hasAnimatedToRegion);
     setIsMapReady(true);
 
-    // Force immediate center on mapRegion (Hosur or user location)
-    setTimeout(() => {
-      if (mapRef.current) {
-        console.warn('🗺️ [MAP] Forcing map to center on region:', JSON.stringify(mapRegion));
-        mapRef.current.animateToRegion(mapRegion, 500);
-      }
-    }, 200);
+    // CRITICAL FIX: Immediately force the map to the correct region
+    // This fixes the worldwide view issue on Android
+    if (mapRef.current && !hasAnimatedToRegion) {
+      const regionToUse = pickupCoords
+        ? { ...pickupCoords, latitudeDelta: 0.05, longitudeDelta: 0.05 }
+        : mapRegion;
+
+      console.warn('🗺️ [MAP] ⚡ FORCING MAP TO REGION:', JSON.stringify(regionToUse));
+
+      // Use multiple attempts to ensure it works
+      setTimeout(() => {
+        if (mapRef.current) {
+          console.warn('🗺️ [MAP] ⚡ Attempt 1: animateToRegion');
+          mapRef.current.animateToRegion(regionToUse, 100);
+        }
+      }, 100);
+
+      setTimeout(() => {
+        if (mapRef.current) {
+          console.warn('🗺️ [MAP] ⚡ Attempt 2: animateToRegion (backup)');
+          mapRef.current.animateToRegion(regionToUse, 100);
+          setHasAnimatedToRegion(true);
+        }
+      }, 500);
+    }
   };
 
   return (

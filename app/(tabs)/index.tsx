@@ -1300,6 +1300,13 @@ export default function HomeScreen() {
     );
   }
 
+  // Debug logging before render
+  console.warn('🏠 [HOME] ===== RENDERING HOME SCREEN =====');
+  console.warn('🏠 [HOME] mapRegion:', JSON.stringify(mapRegion));
+  console.warn('🏠 [HOME] pickupCoords:', JSON.stringify(pickupCoords));
+  console.warn('🏠 [HOME] destinationCoords:', JSON.stringify(destinationCoords));
+  console.warn('🏠 [HOME] pickupLocation text:', pickupLocation);
+
   return (
     <View style={styles.container}>
       {/* Map Container - Full Screen */}
