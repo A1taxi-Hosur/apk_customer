@@ -19,7 +19,8 @@ const { width, height } = Dimensions.get('window');
 export default function TripCompletionNotification() {
   const { notifications, markAsRead } = useRideNotifications();
 
-  console.log('🎯 [TRIP_NOTIFICATION] Component mounted, notifications count:', notifications?.length || 0);
+  console.warn('🎯 [TRIP_NOTIFICATION] Component render, notifications count:', notifications?.length || 0);
+  console.warn('🎯 [TRIP_NOTIFICATION] Notifications:', JSON.stringify(notifications?.map(n => ({ id: n.id, type: n.type, status: n.status }))));
 
   const [visible, setVisible] = useState(false);
   const [notification, setNotification] = useState<any>(null);
@@ -33,15 +34,14 @@ export default function TripCompletionNotification() {
   const [shownNotifications, setShownNotifications] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    console.log('🎯 [TRIP_NOTIFICATION] ===== useEffect TRIGGERED - CHECKING FOR COMPLETION NOTIFICATIONS =====');
-    console.log('🎯 [TRIP_NOTIFICATION] Notifications array length:', notifications.length);
-    console.log('🎯 [TRIP_NOTIFICATION] Notifications array reference:', notifications);
-    console.log('🎯 [TRIP_NOTIFICATION] Total notifications received:', notifications.length);
-    console.log('🎯 [TRIP_NOTIFICATION] Notification types:', notifications.map(n => n.type));
-    console.log('🎯 [TRIP_NOTIFICATION] ride_completed count:', notifications.filter(n => n.type === 'ride_completed').length);
-    console.log('🎯 [TRIP_NOTIFICATION] Unread ride_completed:', notifications.filter(n => n.type === 'ride_completed' && n.status === 'unread').length);
-    console.log('🎯 [TRIP_NOTIFICATION] Already shown count:', shownNotifications.size);
-    console.log('🎯 [TRIP_NOTIFICATION] Currently visible:', visible);
+    console.warn('🎯 [TRIP_NOTIFICATION] ===== useEffect TRIGGERED - CHECKING FOR COMPLETION NOTIFICATIONS =====');
+    console.warn('🎯 [TRIP_NOTIFICATION] Notifications array length:', notifications.length);
+    console.warn('🎯 [TRIP_NOTIFICATION] Total notifications received:', notifications.length);
+    console.warn('🎯 [TRIP_NOTIFICATION] Notification types:', JSON.stringify(notifications.map(n => n.type)));
+    console.warn('🎯 [TRIP_NOTIFICATION] ride_completed count:', notifications.filter(n => n.type === 'ride_completed').length);
+    console.warn('🎯 [TRIP_NOTIFICATION] Unread ride_completed:', notifications.filter(n => n.type === 'ride_completed' && n.status === 'unread').length);
+    console.warn('🎯 [TRIP_NOTIFICATION] Already shown count:', shownNotifications.size);
+    console.warn('🎯 [TRIP_NOTIFICATION] Currently visible:', visible);
 
     // Find unread trip_completed, booking_completed, or ride_completed notifications
     const tripCompletedNotifications = notifications.filter(n =>
@@ -50,15 +50,15 @@ export default function TripCompletionNotification() {
       !shownNotifications.has(n.id)
     );
 
-    console.log('🎯 [TRIP_NOTIFICATION] Filtered completion notifications:', tripCompletedNotifications.length);
+    console.warn('🎯 [TRIP_NOTIFICATION] Filtered completion notifications:', tripCompletedNotifications.length);
     if (tripCompletedNotifications.length > 0) {
-      console.log('🎯 [TRIP_NOTIFICATION] First notification:', {
+      console.warn('🎯 [TRIP_NOTIFICATION] First notification:', JSON.stringify({
         id: tripCompletedNotifications[0].id,
         type: tripCompletedNotifications[0].type,
         status: tripCompletedNotifications[0].status,
         alreadyShown: shownNotifications.has(tripCompletedNotifications[0].id),
         currentNotificationId: notification?.id
-      });
+      }));
     }
 
     // Show new notification if it's different from the currently displayed one
@@ -66,12 +66,14 @@ export default function TripCompletionNotification() {
       const latest = tripCompletedNotifications[0];
       const isNewNotification = !notification || notification.id !== latest.id;
 
+      console.warn('🎯 [TRIP_NOTIFICATION] isNewNotification check:', isNewNotification);
+
       if (isNewNotification) {
-        console.log('🎉 [TRIP_NOTIFICATION] Showing NEW trip completion:', {
+        console.warn('🎉 [TRIP_NOTIFICATION] Showing NEW trip completion:', JSON.stringify({
           notificationId: latest.id,
           rideId: latest.data?.ride_id,
           previousNotificationId: notification?.id
-        });
+        }));
         setNotification(latest);
         setShownNotifications(prev => new Set([...prev, latest.id]));
 

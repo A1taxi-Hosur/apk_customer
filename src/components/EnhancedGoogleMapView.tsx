@@ -59,11 +59,13 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
 
   // Log initial setup on mount
   useEffect(() => {
-    console.log('🗺️🗺️🗺️ [NATIVE-MAP] ===== MAP COMPONENT MOUNTED =====');
-    console.log('🗺️ [NATIVE-MAP] Initial Region Prop:', initialRegion);
-    console.log('🗺️ [NATIVE-MAP] Using mapRegion state:', mapRegion);
-    console.log('🗺️ [NATIVE-MAP] HOSUR_COORDINATES:', HOSUR_COORDINATES);
-    console.log('🗺️ [NATIVE-MAP] Available Drivers Count:', availableDrivers.length);
+    console.warn('🗺️🗺️🗺️ [NATIVE-MAP] ===== MAP COMPONENT MOUNTED =====');
+    console.warn('🗺️ [NATIVE-MAP] Initial Region Prop:', JSON.stringify(initialRegion));
+    console.warn('🗺️ [NATIVE-MAP] Using mapRegion state:', JSON.stringify(mapRegion));
+    console.warn('🗺️ [NATIVE-MAP] HOSUR_COORDINATES:', JSON.stringify(HOSUR_COORDINATES));
+    console.warn('🗺️ [NATIVE-MAP] Available Drivers Count:', availableDrivers.length);
+    console.warn('🗺️ [NATIVE-MAP] pickupCoords:', JSON.stringify(pickupCoords));
+    console.warn('🗺️ [NATIVE-MAP] destinationCoords:', JSON.stringify(destinationCoords));
   }, []);
 
   // Debug props when they change
@@ -285,16 +287,19 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
   };
 
   const handleMapReady = () => {
-    console.log('🗺️ Map is ready');
+    console.warn('🗺️ [MAP] ===== MAP IS READY =====');
+    console.warn('🗺️ [MAP] pickupCoords:', JSON.stringify(pickupCoords));
+    console.warn('🗺️ [MAP] destinationCoords:', JSON.stringify(destinationCoords));
+    console.warn('🗺️ [MAP] userLocation:', JSON.stringify(userLocation));
     setIsMapReady(true);
 
-    // Immediately center on Hosur if no other coordinates are available
+    // Force immediate center on mapRegion (Hosur or user location)
     setTimeout(() => {
-      if (!pickupCoords && !destinationCoords && !userLocation && mapRef.current) {
-        console.log('🗺️ [MAP] Map ready - no coordinates, forcing zoom to Hosur');
-        mapRef.current.animateToRegion(HOSUR_COORDINATES, 500);
+      if (mapRef.current) {
+        console.warn('🗺️ [MAP] Forcing map to center on region:', JSON.stringify(mapRegion));
+        mapRef.current.animateToRegion(mapRegion, 500);
       }
-    }, 100);
+    }, 200);
   };
 
   return (
@@ -316,7 +321,7 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
           }
         }}
         onRegionChangeComplete={(region) => {
-          console.log('🗺️ [MAP] Region changed to:', region);
+          console.warn('🗺️ [MAP] Region changed to:', JSON.stringify(region));
         }}
         mapType="standard"
         loadingEnabled={true}
