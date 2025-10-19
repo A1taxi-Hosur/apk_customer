@@ -17,7 +17,7 @@ import { MapPin, Navigation, ArrowUpDown, Menu, Clock, Plane } from 'lucide-reac
 import * as Location from 'expo-location';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter } from 'expo-router';
-import SimpleMapView from '../../src/components/SimpleMapView';
+import HosurMapView from '../../src/components/HosurMapView';
 import EnhancedLocationSearchModal from '../../src/components/EnhancedLocationSearchModal';
 import CustomAlert from '../../src/components/CustomAlert';
 import { fareCalculator, FareBreakdown, FareConfig } from '../../src/services/fareCalculator';
@@ -1313,21 +1313,9 @@ export default function HomeScreen() {
     <View style={styles.container}>
       {/* Map Container - Full Screen */}
       <View style={styles.mapContainer}>
-        <SimpleMapView
-          currentLocation={currentLocation ? {
-            latitude: currentLocation.coords.latitude,
-            longitude: currentLocation.coords.longitude,
-          } : null}
+        <HosurMapView
           pickupCoords={pickupCoords}
           destinationCoords={destinationCoords}
-          availableDrivers={showDriversOnMap ? availableDrivers : []}
-          showRoute={pickupCoords && destinationCoords ? true : false}
-          onMapReady={() => {
-            console.warn('🗺️ [HOME] Map is ready!');
-            if (pickupCoords && destinationCoords) {
-              calculateFare();
-            }
-          }}
         />
       </View>
 
