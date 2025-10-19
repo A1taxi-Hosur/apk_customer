@@ -57,6 +57,15 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
   const driverMarkerRef = useRef<any>(null);
   const previousDriverLocation = useRef<any>(null);
 
+  // Log initial setup on mount
+  useEffect(() => {
+    console.log('🗺️🗺️🗺️ [NATIVE-MAP] ===== MAP COMPONENT MOUNTED =====');
+    console.log('🗺️ [NATIVE-MAP] Initial Region Prop:', initialRegion);
+    console.log('🗺️ [NATIVE-MAP] Using mapRegion state:', mapRegion);
+    console.log('🗺️ [NATIVE-MAP] HOSUR_COORDINATES:', HOSUR_COORDINATES);
+    console.log('🗺️ [NATIVE-MAP] Available Drivers Count:', availableDrivers.length);
+  }, []);
+
   // Debug props when they change
   useEffect(() => {
     console.log('🗺️ [MAP] Props updated:', {
