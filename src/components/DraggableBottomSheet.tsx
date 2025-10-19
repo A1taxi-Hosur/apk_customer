@@ -9,7 +9,7 @@ import Animated, {
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const MIN_HEIGHT = SCREEN_HEIGHT * 0.3;  // 30% collapsed
+const MIN_HEIGHT = SCREEN_HEIGHT * 0.35;  // 35% collapsed (shows more map)
 const MAX_HEIGHT = SCREEN_HEIGHT * 0.85; // 85% expanded
 
 interface DraggableBottomSheetProps {
@@ -17,7 +17,8 @@ interface DraggableBottomSheetProps {
 }
 
 export default function DraggableBottomSheet({ children }: DraggableBottomSheetProps) {
-  const translateY = useSharedValue(0);
+  // Start at collapsed position (translated down)
+  const translateY = useSharedValue(MAX_HEIGHT - MIN_HEIGHT);
   const context = useSharedValue({ y: 0 });
 
   const gesture = Gesture.Pan()
@@ -26,19 +27,24 @@ export default function DraggableBottomSheet({ children }: DraggableBottomSheetP
     })
     .onUpdate((event) => {
       const newTranslateY = context.value.y + event.translationY;
-      const maxDrag = MAX_HEIGHT - MIN_HEIGHT;
+      const maxDrag = MAX_HEIGHT - MIN_HEIGHT; // Maximum downward translation
+      // Clamp: 0 = fully expanded, maxDrag = fully collapsed
       translateY.value = Math.max(0, Math.min(maxDrag, newTranslateY));
     })
     .onEnd((event) => {
       const shouldExpand = translateY.value < (MAX_HEIGHT - MIN_HEIGHT) / 2;
 
       if (event.velocityY < -500) {
+        // Fast swipe up - expand fully
         translateY.value = withSpring(0, { damping: 20, stiffness: 150 });
       } else if (event.velocityY > 500) {
+        // Fast swipe down - collapse fully
         translateY.value = withSpring(MAX_HEIGHT - MIN_HEIGHT, { damping: 20, stiffness: 150 });
       } else if (shouldExpand) {
+        // Closer to expanded - expand
         translateY.value = withSpring(0, { damping: 20, stiffness: 150 });
       } else {
+        // Closer to collapsed - collapse
         translateY.value = withSpring(MAX_HEIGHT - MIN_HEIGHT, { damping: 20, stiffness: 150 });
       }
     });
