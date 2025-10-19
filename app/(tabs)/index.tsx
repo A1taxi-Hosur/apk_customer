@@ -17,7 +17,7 @@ import { MapPin, Navigation, ArrowUpDown, Menu, Clock, Plane } from 'lucide-reac
 import * as Location from 'expo-location';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter } from 'expo-router';
-import EnhancedGoogleMapView from '../../src/components/EnhancedGoogleMapView';
+import SimpleMapView from '../../src/components/SimpleMapView';
 import EnhancedLocationSearchModal from '../../src/components/EnhancedLocationSearchModal';
 import CustomAlert from '../../src/components/CustomAlert';
 import { fareCalculator, FareBreakdown, FareConfig } from '../../src/services/fareCalculator';
@@ -1302,30 +1302,32 @@ export default function HomeScreen() {
 
   // Debug logging before render
   console.warn('🏠 [HOME] ===== RENDERING HOME SCREEN =====');
-  console.warn('🏠 [HOME] mapRegion:', JSON.stringify(mapRegion));
+  console.warn('🏠 [HOME] currentLocation:', JSON.stringify(currentLocation?.coords));
   console.warn('🏠 [HOME] pickupCoords:', JSON.stringify(pickupCoords));
   console.warn('🏠 [HOME] destinationCoords:', JSON.stringify(destinationCoords));
   console.warn('🏠 [HOME] pickupLocation text:', pickupLocation);
+  console.warn('🏠 [HOME] availableDrivers count:', availableDrivers.length);
+  console.warn('🏠 [HOME] showDriversOnMap:', showDriversOnMap);
 
   return (
     <View style={styles.container}>
       {/* Map Container - Full Screen */}
       <View style={styles.mapContainer}>
-        <EnhancedGoogleMapView
-          initialRegion={mapRegion}
+        <SimpleMapView
+          currentLocation={currentLocation ? {
+            latitude: currentLocation.coords.latitude,
+            longitude: currentLocation.coords.longitude,
+          } : null}
           pickupCoords={pickupCoords}
           destinationCoords={destinationCoords}
           availableDrivers={showDriversOnMap ? availableDrivers : []}
-          showRoute={true}
-          onRouteReady={(result) => {
-            // Calculate fare when route is ready
-            if (result.distance > 0 && pickupCoords && destinationCoords) {
+          showRoute={pickupCoords && destinationCoords ? true : false}
+          onMapReady={() => {
+            console.warn('🗺️ [HOME] Map is ready!');
+            if (pickupCoords && destinationCoords) {
               calculateFare();
             }
           }}
-          style={styles.map}
-          showUserLocation={true}
-          followUserLocation={false}
         />
       </View>
 

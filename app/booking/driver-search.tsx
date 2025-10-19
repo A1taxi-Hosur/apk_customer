@@ -17,7 +17,7 @@ import { Platform } from 'react-native';
 import { supabase } from '../../src/utils/supabase';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { realtimeService } from '../../src/services/realtimeService';
-import EnhancedGoogleMapView from '../../src/components/EnhancedGoogleMapView';
+import SimpleMapView from '../../src/components/SimpleMapView';
 import DriverArrivingAnimation from '../../src/components/DriverArrivingAnimation';
 import AnimatedETAProgressRing from '../../src/components/AnimatedETAProgressRing';
 import LiveDriverTracking from '../../src/components/LiveDriverTracking';
@@ -898,29 +898,23 @@ export default function DriverSearchScreen() {
           {/* Debug Info */}
           {/* Map Container */}
           <View style={styles.mapContainer}>
-            <EnhancedGoogleMapView
-              initialRegion={{
-                latitude: rideDetails.pickupLatitude || 12.7402,
-                longitude: rideDetails.pickupLongitude || 77.8240,
-                latitudeDelta: 0.05, // Show 5-6 km area
-                longitudeDelta: 0.05,
-              }}
+            <SimpleMapView
+              currentLocation={rideDetails.pickupLatitude && rideDetails.pickupLongitude ? {
+                latitude: rideDetails.pickupLatitude,
+                longitude: rideDetails.pickupLongitude,
+              } : null}
               pickupCoords={rideDetails.pickupLatitude && rideDetails.pickupLongitude ? {
                 latitude: rideDetails.pickupLatitude,
                 longitude: rideDetails.pickupLongitude,
-              } : undefined}
-              destinationCoords={(searchStatus === 'found' || searchStatus === 'celebrating') && driverLocation ? {
-                latitude: driverLocation.latitude,
-                longitude: driverLocation.longitude,
-              } : (rideDetails.destinationLatitude && rideDetails.destinationLongitude ? {
+              } : null}
+              destinationCoords={rideDetails.destinationLatitude && rideDetails.destinationLongitude ? {
                 latitude: rideDetails.destinationLatitude,
                 longitude: rideDetails.destinationLongitude,
-              } : undefined)}
-              driverLocation={driverLocation}
+              } : null}
               showRoute={true}
-              style={styles.map}
-              showUserLocation={false}
-              followUserLocation={false}
+              onMapReady={() => {
+                console.warn('🗺️ [DRIVER_SEARCH] Map ready');
+              }}
             />
           </View>
 
