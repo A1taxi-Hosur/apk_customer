@@ -24,11 +24,13 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
   const mapRef = useRef<MapView>(null);
   const [mapReady, setMapReady] = useState(false);
   const [attempts, setAttempts] = useState(0);
+  const [currentRegion, setCurrentRegion] = useState(HOSUR_REGION);
 
   const forceHosurCenter = () => {
     if (mapRef.current) {
       setAttempts(prev => prev + 1);
-      mapRef.current.animateToRegion(HOSUR_REGION, 500);
+      setCurrentRegion(HOSUR_REGION);
+      mapRef.current.animateToRegion(HOSUR_REGION, 300);
     }
   };
 
@@ -79,7 +81,7 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
         ref={mapRef}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
-        initialRegion={HOSUR_REGION}
+        region={currentRegion}
         showsUserLocation={false}
         showsMyLocationButton={false}
         onMapReady={() => {
@@ -88,8 +90,10 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
         }}
         onLayout={() => {
           console.log('📐 onLayout fired - map laid out');
-          // Fallback: if onMapReady doesn't fire, use onLayout
           setTimeout(() => setMapReady(true), 200);
+        }}
+        onRegionChangeComplete={(region) => {
+          setCurrentRegion(region);
         }}
         minZoomLevel={10}
         maxZoomLevel={18}
