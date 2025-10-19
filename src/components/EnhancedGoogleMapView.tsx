@@ -124,6 +124,9 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
   useEffect(() => {
     if (isMapReady) {
       console.log('🗺️ [MAP] ===== FITTING MAP TO MARKERS =====');
+      console.log('🗺️ [MAP] pickupCoords:', pickupCoords);
+      console.log('🗺️ [MAP] destinationCoords:', destinationCoords);
+      console.log('🗺️ [MAP] userLocation:', userLocation);
       console.log('🗺️ [MAP] Available drivers for markers:', availableDrivers.length);
       console.log('🗺️ [MAP] Driver details for markers:', availableDrivers.map(d => ({
         driver_id: d.driver_id,
@@ -255,7 +258,10 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
       ...(driverLocation ? [driverLocation] : []),
     ];
 
+    console.log('🗺️ [MAP] fitMapToMarkers - coordinates count:', coordinates.length);
+
     if (coordinates.length > 1) {
+      console.log('🗺️ [MAP] Fitting to multiple coordinates');
       setTimeout(() => {
         mapRef.current?.fitToCoordinates(coordinates, {
           edgePadding: { top: 100, right: 50, bottom: 100, left: 50 },
@@ -263,6 +269,7 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
         });
       }, 500);
     } else if (coordinates.length === 1) {
+      console.log('🗺️ [MAP] Centering on single coordinate:', coordinates[0]);
       mapRef.current.animateToRegion({
         ...coordinates[0],
         latitudeDelta: 0.05,
@@ -270,15 +277,24 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
       }, 1000);
     } else {
       // No coordinates, zoom to Hosur region
-      mapRef.current.animateToRegion({
-        ...HOSUR_COORDINATES,
-      }, 1000);
+      console.log('🗺️ [MAP] No coordinates, zooming to Hosur region:', HOSUR_COORDINATES);
+      setTimeout(() => {
+        mapRef.current?.animateToRegion(HOSUR_COORDINATES, 1000);
+      }, 300);
     }
   };
 
   const handleMapReady = () => {
     console.log('🗺️ Map is ready');
     setIsMapReady(true);
+
+    // Immediately center on Hosur if no other coordinates are available
+    setTimeout(() => {
+      if (!pickupCoords && !destinationCoords && !userLocation && mapRef.current) {
+        console.log('🗺️ [MAP] Map ready - no coordinates, forcing zoom to Hosur');
+        mapRef.current.animateToRegion(HOSUR_COORDINATES, 500);
+      }
+    }, 100);
   };
 
   return (
@@ -299,6 +315,9 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
             onMapPress(event.nativeEvent.coordinate);
           }
         }}
+        onRegionChangeComplete={(region) => {
+          console.log('🗺️ [MAP] Region changed to:', region);
+        }}
         mapType="standard"
         loadingEnabled={true}
         loadingIndicatorColor="#2563EB"
@@ -307,6 +326,8 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
         rotateEnabled={true}
         scrollEnabled={true}
         zoomEnabled={true}
+        minZoomLevel={8}
+        maxZoomLevel={20}
       >
         {/* User Location Marker - Show when no pickup is set */}
         {userLocation && showUserLocation && !pickupCoords && (
