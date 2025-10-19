@@ -12,6 +12,7 @@ import {
   Modal,
   Platform,
 } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MapPin, Navigation, ArrowUpDown, Menu, Clock, Plane } from 'lucide-react-native';
 import * as Location from 'expo-location';
@@ -1319,8 +1320,15 @@ export default function HomeScreen() {
         />
       </View>
 
-      {/* Bottom Sheet - Scrollable Over Map */}
-      <View style={styles.bottomSheet}>
+      {/* Bottom Sheet - Draggable */}
+      <Animated.View
+        style={[
+          styles.bottomSheet,
+          {
+            maxHeight: height * 0.85,
+          }
+        ]}
+      >
         <View style={styles.dragHandle} />
 
         <ScrollView
@@ -1496,7 +1504,7 @@ export default function HomeScreen() {
             </View>
           )}
         </ScrollView>
-      </View>
+      </Animated.View>
 
       {/* Location search modals */}
       <EnhancedLocationSearchModal
