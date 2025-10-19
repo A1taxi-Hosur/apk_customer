@@ -23,12 +23,11 @@ export default function SimpleMapView({
   onMapReady,
 }: SimpleMapViewProps) {
   const mapRef = useRef<MapView>(null);
-  const [isReady, setIsReady] = useState(false);
 
-  // Determine initial region - priority: pickupCoords > currentLocation > Hosur
-  const getInitialRegion = (): Region => {
+  // Determine region to display - priority: pickupCoords > currentLocation > Hosur
+  const calculateRegion = (): Region => {
     if (pickupCoords) {
-      console.warn('📍 [SimpleMap] Using pickup coords:', pickupCoords);
+      console.warn('📍 [SimpleMap] Using pickup coords:', JSON.stringify(pickupCoords));
       return {
         latitude: pickupCoords.latitude,
         longitude: pickupCoords.longitude,
@@ -38,7 +37,7 @@ export default function SimpleMapView({
     }
 
     if (currentLocation) {
-      console.warn('📍 [SimpleMap] Using current location:', currentLocation);
+      console.warn('📍 [SimpleMap] Using current location:', JSON.stringify(currentLocation));
       return {
         latitude: currentLocation.latitude,
         longitude: currentLocation.longitude,
@@ -47,64 +46,78 @@ export default function SimpleMapView({
       };
     }
 
-    console.warn('📍 [SimpleMap] Using Hosur default:', HOSUR_COORDINATES);
+    console.warn('📍 [SimpleMap] Using Hosur default:', JSON.stringify(HOSUR_COORDINATES));
     return HOSUR_COORDINATES;
   };
 
-  const initialRegion = getInitialRegion();
+  // Use state for region to force re-render when it changes
+  const [region, setRegion] = useState<Region>(calculateRegion());
 
   useEffect(() => {
-    console.warn('🗺️ [SimpleMap] Component mounted');
-    console.warn('🗺️ [SimpleMap] Initial region:', JSON.stringify(initialRegion));
-  }, []);
+    const newRegion = calculateRegion();
+    console.warn('🗺️ [SimpleMap] Component mounted/updated, setting region:', JSON.stringify(newRegion));
+    setRegion(newRegion);
+  }, [pickupCoords, destinationCoords, currentLocation]);
 
-  // Handle map ready
+  // Handle map ready - CRITICAL FIX for Android
   const handleMapReady = () => {
-    console.warn('✅ [SimpleMap] Map is ready!');
-    setIsReady(true);
+    console.warn('✅ [SimpleMap] ===== MAP IS READY =====');
+    console.warn('✅ [SimpleMap] Current region state:', JSON.stringify(region));
 
-    // Force center on initial region after a short delay
-    setTimeout(() => {
+    // ANDROID FIX: Force animate to region multiple times
+    // This is the ONLY reliable way to center the map on Android
+    const forceCenter = () => {
       if (mapRef.current) {
-        console.warn('🎯 [SimpleMap] Animating to initial region');
-        mapRef.current.animateToRegion(initialRegion, 1000);
-      }
-    }, 500);
+        console.warn('🎯 [SimpleMap] FORCING center to:', JSON.stringify(region));
 
+        // Try multiple times with delays - Android sometimes ignores the first call
+        setTimeout(() => {
+          mapRef.current?.animateToRegion(region, 300);
+        }, 100);
+
+        setTimeout(() => {
+          mapRef.current?.animateToRegion(region, 300);
+        }, 500);
+
+        setTimeout(() => {
+          mapRef.current?.animateToRegion(region, 300);
+        }, 1000);
+
+        setTimeout(() => {
+          mapRef.current?.animateToRegion(region, 300);
+        }, 2000);
+      }
+    };
+
+    forceCenter();
     onMapReady?.();
   };
 
-  // Auto-fit map when markers change
+  // When region changes, animate map to new region
   useEffect(() => {
-    if (!isReady || !mapRef.current) return;
-
-    const coordinates: Array<{ latitude: number; longitude: number }> = [];
-
-    if (pickupCoords) coordinates.push(pickupCoords);
-    if (destinationCoords) coordinates.push(destinationCoords);
-    if (currentLocation && !pickupCoords) coordinates.push(currentLocation);
-
-    console.warn('🗺️ [SimpleMap] Coordinates to fit:', coordinates.length);
-
-    if (coordinates.length > 1) {
-      // Fit multiple markers
+    if (mapRef.current) {
+      console.warn('🔄 [SimpleMap] Region changed, animating to:', JSON.stringify(region));
       setTimeout(() => {
-        mapRef.current?.fitToCoordinates(coordinates, {
-          edgePadding: { top: 100, right: 50, bottom: 100, left: 50 },
-          animated: true,
-        });
-      }, 300);
-    } else if (coordinates.length === 1) {
-      // Center on single marker
-      setTimeout(() => {
-        mapRef.current?.animateToRegion({
-          ...coordinates[0],
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        }, 1000);
+        mapRef.current?.animateToRegion(region, 1000);
       }, 300);
     }
-  }, [isReady, pickupCoords, destinationCoords, currentLocation]);
+  }, [region]);
+
+  // Auto-fit when both pickup and destination exist
+  useEffect(() => {
+    if (mapRef.current && pickupCoords && destinationCoords) {
+      console.warn('🗺️ [SimpleMap] Fitting to both markers');
+      setTimeout(() => {
+        mapRef.current?.fitToCoordinates(
+          [pickupCoords, destinationCoords],
+          {
+            edgePadding: { top: 100, right: 50, bottom: 100, left: 50 },
+            animated: true,
+          }
+        );
+      }, 500);
+    }
+  }, [pickupCoords, destinationCoords]);
 
   return (
     <View style={styles.container}>
@@ -112,7 +125,7 @@ export default function SimpleMapView({
         ref={mapRef}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
-        initialRegion={initialRegion}
+        region={region}
         showsUserLocation={true}
         showsMyLocationButton={false}
         showsCompass={true}
@@ -120,6 +133,14 @@ export default function SimpleMapView({
         mapType="standard"
         minZoomLevel={8}
         maxZoomLevel={20}
+        loadingEnabled={true}
+        loadingIndicatorColor="#2563EB"
+        loadingBackgroundColor="#FFFFFF"
+        moveOnMarkerPress={false}
+        zoomEnabled={true}
+        scrollEnabled={true}
+        pitchEnabled={false}
+        rotateEnabled={false}
       >
         {/* Current Location Marker - only show if no pickup coords */}
         {currentLocation && !pickupCoords && (
