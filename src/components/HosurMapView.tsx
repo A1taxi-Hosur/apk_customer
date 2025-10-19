@@ -32,13 +32,26 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
     }
   };
 
+  // FIX: Start centering immediately on mount, don't wait for onMapReady
+  useEffect(() => {
+    // Set ready immediately
+    const immediateTimer = setTimeout(() => {
+      setMapReady(true);
+    }, 100);
+
+    return () => clearTimeout(immediateTimer);
+  }, []);
+
   useEffect(() => {
     if (mapReady) {
-      // Force center 5 times
+      // Force center 8 times with more aggressive timing
       const timers = [
         setTimeout(forceHosurCenter, 100),
+        setTimeout(forceHosurCenter, 300),
         setTimeout(forceHosurCenter, 500),
+        setTimeout(forceHosurCenter, 800),
         setTimeout(forceHosurCenter, 1000),
+        setTimeout(forceHosurCenter, 1500),
         setTimeout(forceHosurCenter, 2000),
         setTimeout(forceHosurCenter, 3000),
       ];
@@ -70,7 +83,13 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
         showsUserLocation={false}
         showsMyLocationButton={false}
         onMapReady={() => {
+          console.log('🗺️ onMapReady fired!');
           setMapReady(true);
+        }}
+        onLayout={() => {
+          console.log('📐 onLayout fired - map laid out');
+          // Fallback: if onMapReady doesn't fire, use onLayout
+          setTimeout(() => setMapReady(true), 200);
         }}
         minZoomLevel={10}
         maxZoomLevel={18}
