@@ -22,6 +22,7 @@ module.exports = {
         root: './app',
       },
     ],
+    './plugins/withGoogleMapsApiKey.js',
     [
       'react-native-maps',
       {
