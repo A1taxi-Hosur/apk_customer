@@ -21,7 +21,6 @@ import SimpleMapView from '../../src/components/SimpleMapView';
 import DriverArrivingAnimation from '../../src/components/DriverArrivingAnimation';
 import AnimatedETAProgressRing from '../../src/components/AnimatedETAProgressRing';
 import LiveDriverTracking from '../../src/components/LiveDriverTracking';
-import AnimatedDriverRoute from '../../src/components/AnimatedDriverRoute';
 
 // Utility function to refresh the app
 const refreshApp = () => {
@@ -899,46 +898,24 @@ export default function DriverSearchScreen() {
           {/* Debug Info */}
           {/* Map Container */}
           <View style={styles.mapContainer}>
-            {(searchStatus === 'found' || searchStatus === 'celebrating') && driverLocation ? (
-              // Show animated route from driver to customer when driver is found
-              <AnimatedDriverRoute
-                driverLocation={{
-                  latitude: driverLocation.latitude,
-                  longitude: driverLocation.longitude,
-                }}
-                customerLocation={{
-                  latitude: rideDetails.pickupLatitude,
-                  longitude: rideDetails.pickupLongitude,
-                }}
-                driverHeading={driverLocation.heading || 0}
-                onRouteReady={(result) => {
-                  console.log('🗺️ [DRIVER_SEARCH] Route ready:', {
-                    distance: result.distance,
-                    duration: result.duration,
-                  });
-                }}
-              />
-            ) : (
-              // Show static map while searching
-              <SimpleMapView
-                currentLocation={rideDetails.pickupLatitude && rideDetails.pickupLongitude ? {
-                  latitude: rideDetails.pickupLatitude,
-                  longitude: rideDetails.pickupLongitude,
-                } : null}
-                pickupCoords={rideDetails.pickupLatitude && rideDetails.pickupLongitude ? {
-                  latitude: rideDetails.pickupLatitude,
-                  longitude: rideDetails.pickupLongitude,
-                } : null}
-                destinationCoords={rideDetails.destinationLatitude && rideDetails.destinationLongitude ? {
-                  latitude: rideDetails.destinationLatitude,
-                  longitude: rideDetails.destinationLongitude,
-                } : null}
-                showRoute={true}
-                onMapReady={() => {
-                  console.warn('🗺️ [DRIVER_SEARCH] Map ready');
-                }}
-              />
-            )}
+            <SimpleMapView
+              currentLocation={rideDetails.pickupLatitude && rideDetails.pickupLongitude ? {
+                latitude: rideDetails.pickupLatitude,
+                longitude: rideDetails.pickupLongitude,
+              } : null}
+              pickupCoords={rideDetails.pickupLatitude && rideDetails.pickupLongitude ? {
+                latitude: rideDetails.pickupLatitude,
+                longitude: rideDetails.pickupLongitude,
+              } : null}
+              destinationCoords={rideDetails.destinationLatitude && rideDetails.destinationLongitude ? {
+                latitude: rideDetails.destinationLatitude,
+                longitude: rideDetails.destinationLongitude,
+              } : null}
+              showRoute={true}
+              onMapReady={() => {
+                console.warn('🗺️ [DRIVER_SEARCH] Map ready');
+              }}
+            />
           </View>
 
           {/* Live Driver Tracking Overlay */}

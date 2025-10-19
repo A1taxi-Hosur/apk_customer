@@ -64,6 +64,19 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
 
   return (
     <View style={styles.container}>
+      {/* Debug Overlay */}
+      <View style={styles.debugOverlay}>
+        <Text style={styles.debugText}>📍 Hosur: {HOSUR_COORDS.latitude}, {HOSUR_COORDS.longitude}</Text>
+        <Text style={styles.debugText}>🗺️ Map Ready: {mapReady ? 'YES' : 'NO'}</Text>
+        <Text style={styles.debugText}>🎯 Center Attempts: {attempts}</Text>
+        {pickupCoords && (
+          <Text style={styles.debugText}>🅿️ Pickup: {pickupCoords.latitude.toFixed(4)}, {pickupCoords.longitude.toFixed(4)}</Text>
+        )}
+        {destinationCoords && (
+          <Text style={styles.debugText}>🏁 Dest: {destinationCoords.latitude.toFixed(4)}, {destinationCoords.longitude.toFixed(4)}</Text>
+        )}
+      </View>
+
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -134,6 +147,22 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  debugOverlay: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    right: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    padding: 10,
+    borderRadius: 8,
+    zIndex: 1000,
+  },
+  debugText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontFamily: 'monospace',
+    marginBottom: 4,
   },
   centerMarker: {
     width: 40,
