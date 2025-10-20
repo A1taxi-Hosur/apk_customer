@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 import { MapPin } from 'lucide-react-native';
 
 const HOSUR_COORDS = {
@@ -20,11 +21,25 @@ interface HosurMapViewProps {
   destinationCoords?: { latitude: number; longitude: number } | null;
 }
 
+// Get Google Maps API key from environment
+const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
+
 export default function HosurMapView({ pickupCoords, destinationCoords }: HosurMapViewProps) {
   const mapRef = useRef<MapView>(null);
   const [mapReady, setMapReady] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [currentRegion, setCurrentRegion] = useState(HOSUR_REGION);
+
+  // Fit map to show both markers when they exist
+  useEffect(() => {
+    if (mapRef.current && pickupCoords && destinationCoords && mapReady) {
+      const coordinates = [pickupCoords, destinationCoords];
+      mapRef.current.fitToCoordinates(coordinates, {
+        edgePadding: { top: 100, right: 50, bottom: 350, left: 50 },
+        animated: true,
+      });
+    }
+  }, [pickupCoords, destinationCoords, mapReady]);
 
   const forceHosurCenter = () => {
     if (mapRef.current) {
@@ -64,19 +79,6 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
 
   return (
     <View style={styles.container}>
-      {/* Debug Overlay */}
-      <View style={styles.debugOverlay}>
-        <Text style={styles.debugText}>📍 Hosur: {HOSUR_COORDS.latitude}, {HOSUR_COORDS.longitude}</Text>
-        <Text style={styles.debugText}>🗺️ Map Ready: {mapReady ? 'YES' : 'NO'}</Text>
-        <Text style={styles.debugText}>🎯 Center Attempts: {attempts}</Text>
-        {pickupCoords && (
-          <Text style={styles.debugText}>🅿️ Pickup: {pickupCoords.latitude.toFixed(4)}, {pickupCoords.longitude.toFixed(4)}</Text>
-        )}
-        {destinationCoords && (
-          <Text style={styles.debugText}>🏁 Dest: {destinationCoords.latitude.toFixed(4)}, {destinationCoords.longitude.toFixed(4)}</Text>
-        )}
-      </View>
-
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -102,22 +104,46 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
         pitchEnabled={false}
         rotateEnabled={false}
       >
-        {/* Center marker at Hosur */}
-        <Marker
-          coordinate={HOSUR_COORDS}
-          title="Hosur City Center"
-          description="Default Location"
-        >
-          <View style={styles.centerMarker}>
-            <MapPin size={24} color="#DC2626" />
-          </View>
-        </Marker>
+        {/* Draw route between pickup and destination */}
+        {pickupCoords && destinationCoords && GOOGLE_MAPS_API_KEY && (
+          <MapViewDirections
+            origin={pickupCoords}
+            destination={destinationCoords}
+            apikey={GOOGLE_MAPS_API_KEY}
+            strokeWidth={4}
+            strokeColor="#2563EB"
+            optimizeWaypoints={true}
+            onReady={(result) => {
+              console.log('🗺️ Route ready:', {
+                distance: result.distance,
+                duration: result.duration,
+              });
+            }}
+            onError={(errorMessage) => {
+              console.error('🗺️ Route error:', errorMessage);
+            }}
+          />
+        )}
+
+        {/* Center marker at Hosur - only show when no pickup/destination selected */}
+        {!pickupCoords && !destinationCoords && (
+          <Marker
+            coordinate={HOSUR_COORDS}
+            title="Hosur City Center"
+            description="Default Location"
+          >
+            <View style={styles.centerMarker}>
+              <MapPin size={24} color="#DC2626" />
+            </View>
+          </Marker>
+        )}
 
         {/* Pickup marker */}
         {pickupCoords && (
           <Marker
             coordinate={pickupCoords}
             title="Pickup"
+            pinColor="#10B981"
           >
             <View style={styles.pickupMarker}>
               <MapPin size={20} color="#FFFFFF" />
@@ -130,6 +156,7 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
           <Marker
             coordinate={destinationCoords}
             title="Destination"
+            pinColor="#EF4444"
           >
             <View style={styles.destMarker}>
               <MapPin size={20} color="#FFFFFF" />
@@ -148,22 +175,6 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
-  debugOverlay: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    right: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    padding: 10,
-    borderRadius: 8,
-    zIndex: 1000,
-  },
-  debugText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontFamily: 'monospace',
-    marginBottom: 4,
-  },
   centerMarker: {
     width: 40,
     height: 40,
@@ -176,25 +187,33 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   pickupMarker: {
-    width: 36,
-    height: 36,
-    backgroundColor: '#2563EB',
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    backgroundColor: '#10B981',
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
     borderColor: '#FFFFFF',
-    elevation: 5,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   destMarker: {
-    width: 36,
-    height: 36,
-    backgroundColor: '#059669',
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    backgroundColor: '#EF4444',
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
     borderColor: '#FFFFFF',
-    elevation: 5,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
 });

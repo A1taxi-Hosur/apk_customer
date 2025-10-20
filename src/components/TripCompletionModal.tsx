@@ -504,6 +504,18 @@ export default function TripCompletionModal() {
                   </View>
                 )}
 
+                {/* Deadhead Charges */}
+                {fareBreakdown.deadhead_charges > 0 && (
+                  <View style={styles.fareItem}>
+                    <Text style={styles.fareLabel}>
+                      Deadhead Charges
+                      {fareBreakdown.deadhead_distance > 0 &&
+                        ` (${fareBreakdown.deadhead_distance.toFixed(1)}km return)`}
+                    </Text>
+                    <Text style={styles.fareValue}>₹{fareBreakdown.deadhead_charges.toFixed(2)}</Text>
+                  </View>
+                )}
+
                 {/* Platform Fee */}
                 {fareBreakdown.platform_fee > 0 && (
                   <View style={styles.fareItem}>

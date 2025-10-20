@@ -58,16 +58,8 @@ export function useRideNotifications() {
         }
       });
 
-      // POLLING: Check for new notifications every 5 seconds
-      // This ensures trip completion notifications are caught even if realtime fails
-      const pollingInterval = setInterval(() => {
-        console.warn('⏰ [useRideNotifications] Polling for new notifications...');
-        fetchNotifications();
-      }, 5000);
-
       return () => {
         subscription.unsubscribe();
-        clearInterval(pollingInterval);
       };
     }
   }, [user]);
