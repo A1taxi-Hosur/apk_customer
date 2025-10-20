@@ -17,6 +17,7 @@ const HOSUR_REGION = {
 };
 
 interface HosurMapViewProps {
+  currentLocation?: { latitude: number; longitude: number } | null;
   pickupCoords?: { latitude: number; longitude: number } | null;
   destinationCoords?: { latitude: number; longitude: number } | null;
 }
@@ -24,11 +25,17 @@ interface HosurMapViewProps {
 // Get Google Maps API key from environment
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
-export default function HosurMapView({ pickupCoords, destinationCoords }: HosurMapViewProps) {
+export default function HosurMapView({ currentLocation, pickupCoords, destinationCoords }: HosurMapViewProps) {
   const mapRef = useRef<MapView>(null);
   const [mapReady, setMapReady] = useState(false);
   const [attempts, setAttempts] = useState(0);
-  const [currentRegion, setCurrentRegion] = useState(HOSUR_REGION);
+
+  // Set initial region based on current location or default to Hosur
+  const initialRegion = currentLocation
+    ? { ...currentLocation, latitudeDelta: 0.05, longitudeDelta: 0.05 }
+    : HOSUR_REGION;
+
+  const [currentRegion, setCurrentRegion] = useState(initialRegion);
 
   // Fit map to show both markers when they exist
   useEffect(() => {
@@ -41,13 +48,17 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
     }
   }, [pickupCoords, destinationCoords, mapReady]);
 
-  const forceHosurCenter = () => {
-    if (mapRef.current) {
-      setAttempts(prev => prev + 1);
-      setCurrentRegion(HOSUR_REGION);
-      mapRef.current.animateToRegion(HOSUR_REGION, 300);
+  // Center map on current location when available (and no route is selected)
+  useEffect(() => {
+    if (mapRef.current && currentLocation && !pickupCoords && !destinationCoords && mapReady) {
+      const region = {
+        ...currentLocation,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      };
+      mapRef.current.animateToRegion(region, 500);
     }
-  };
+  }, [currentLocation, mapReady, pickupCoords, destinationCoords]);
 
   // FIX: Start centering immediately on mount, don't wait for onMapReady
   useEffect(() => {
@@ -58,24 +69,6 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
 
     return () => clearTimeout(immediateTimer);
   }, []);
-
-  useEffect(() => {
-    if (mapReady) {
-      // Force center 8 times with more aggressive timing
-      const timers = [
-        setTimeout(forceHosurCenter, 100),
-        setTimeout(forceHosurCenter, 300),
-        setTimeout(forceHosurCenter, 500),
-        setTimeout(forceHosurCenter, 800),
-        setTimeout(forceHosurCenter, 1000),
-        setTimeout(forceHosurCenter, 1500),
-        setTimeout(forceHosurCenter, 2000),
-        setTimeout(forceHosurCenter, 3000),
-      ];
-
-      return () => timers.forEach(clearTimeout);
-    }
-  }, [mapReady]);
 
   return (
     <View style={styles.container}>
@@ -125,8 +118,21 @@ export default function HosurMapView({ pickupCoords, destinationCoords }: HosurM
           />
         )}
 
-        {/* Center marker at Hosur - only show when no pickup/destination selected */}
-        {!pickupCoords && !destinationCoords && (
+        {/* Current location marker - show when no pickup/destination selected */}
+        {!pickupCoords && !destinationCoords && currentLocation && (
+          <Marker
+            coordinate={currentLocation}
+            title="Your Location"
+            description="Current Location"
+          >
+            <View style={styles.currentLocationMarker}>
+              <View style={styles.currentLocationDot} />
+            </View>
+          </Marker>
+        )}
+
+        {/* Fallback center marker at Hosur - only show when no location data */}
+        {!pickupCoords && !destinationCoords && !currentLocation && (
           <Marker
             coordinate={HOSUR_COORDS}
             title="Hosur City Center"
@@ -185,6 +191,23 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: '#DC2626',
     elevation: 5,
+  },
+  currentLocationMarker: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    elevation: 5,
+  },
+  currentLocationDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#2563EB',
   },
   pickupMarker: {
     width: 40,
