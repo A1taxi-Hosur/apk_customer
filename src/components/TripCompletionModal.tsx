@@ -299,7 +299,7 @@ export default function TripCompletionModal() {
       console.log('💰 [MODAL] Fetching fare breakdown for:', { rideId, bookingId });
 
       let query = supabase
-        .from('trip_completion')
+        .from('trip_completions')
         .select('*');
 
       if (rideId) {
@@ -317,9 +317,14 @@ export default function TripCompletionModal() {
 
       if (data) {
         console.log('💰 [MODAL] Fare breakdown fetched successfully:', data);
+        console.log('💰 [MODAL] Deadhead charges:', {
+          deadhead_charges: data.deadhead_charges,
+          deadhead_distance: data.deadhead_distance,
+          has_deadhead: data.deadhead_charges > 0
+        });
         setFareBreakdown(data);
       } else {
-        console.log('💰 [MODAL] No fare breakdown found in trip_completion table');
+        console.log('💰 [MODAL] No fare breakdown found in trip_completions table');
       }
     } catch (error) {
       console.error('💰 [MODAL] Exception fetching fare breakdown:', error);
@@ -463,7 +468,7 @@ export default function TripCompletionModal() {
             </View>
           </View>
 
-          {/* Fare Breakdown from trip_completion table */}
+          {/* Fare Breakdown from trip_completions table */}
           {fareBreakdown && (
             <View style={styles.fareSection}>
               <Text style={styles.sectionTitle}>Fare Breakdown</Text>
@@ -480,27 +485,27 @@ export default function TripCompletionModal() {
                   </View>
                 )}
 
-                {/* Per KM Charges */}
-                {fareBreakdown.per_km_charges > 0 && (
+                {/* Distance Fare */}
+                {fareBreakdown.distance_fare > 0 && (
                   <View style={styles.fareItem}>
                     <Text style={styles.fareLabel}>
-                      Per KM Charges
-                      {fareBreakdown.distance_km > 0 && fareBreakdown.per_km_rate > 0 &&
-                        ` (${fareBreakdown.distance_km.toFixed(1)}km × ₹${fareBreakdown.per_km_rate.toFixed(2)}/km)`}
+                      Distance Charges
+                      {fareBreakdown.actual_distance_km > 0 &&
+                        ` (${fareBreakdown.actual_distance_km.toFixed(1)}km)`}
                     </Text>
-                    <Text style={styles.fareValue}>₹{fareBreakdown.per_km_charges.toFixed(2)}</Text>
+                    <Text style={styles.fareValue}>₹{fareBreakdown.distance_fare.toFixed(2)}</Text>
                   </View>
                 )}
 
-                {/* Per Min Charges */}
-                {fareBreakdown.per_min_charges > 0 && (
+                {/* Time Fare */}
+                {fareBreakdown.time_fare > 0 && (
                   <View style={styles.fareItem}>
                     <Text style={styles.fareLabel}>
                       Time Charges
-                      {fareBreakdown.duration_minutes > 0 && fareBreakdown.per_min_rate > 0 &&
-                        ` (${Math.round(fareBreakdown.duration_minutes)}min × ₹${fareBreakdown.per_min_rate.toFixed(2)}/min)`}
+                      {fareBreakdown.actual_duration_minutes > 0 &&
+                        ` (${fareBreakdown.actual_duration_minutes}min)`}
                     </Text>
-                    <Text style={styles.fareValue}>₹{fareBreakdown.per_min_charges.toFixed(2)}</Text>
+                    <Text style={styles.fareValue}>₹{fareBreakdown.time_fare.toFixed(2)}</Text>
                   </View>
                 )}
 
@@ -508,9 +513,7 @@ export default function TripCompletionModal() {
                 {fareBreakdown.deadhead_charges > 0 && (
                   <View style={styles.fareItem}>
                     <Text style={styles.fareLabel}>
-                      Deadhead Charges
-                      {fareBreakdown.deadhead_distance > 0 &&
-                        ` (${fareBreakdown.deadhead_distance.toFixed(1)}km return)`}
+                      Deadhead Charges (Return to service area)
                     </Text>
                     <Text style={styles.fareValue}>₹{fareBreakdown.deadhead_charges.toFixed(2)}</Text>
                   </View>
@@ -525,18 +528,18 @@ export default function TripCompletionModal() {
                 )}
 
                 {/* GST on Charges */}
-                {fareBreakdown.gst_charges > 0 && (
+                {fareBreakdown.gst_on_charges > 0 && (
                   <View style={styles.fareItem}>
                     <Text style={styles.fareLabel}>GST on Charges (5%)</Text>
-                    <Text style={styles.fareValue}>₹{fareBreakdown.gst_charges.toFixed(2)}</Text>
+                    <Text style={styles.fareValue}>₹{fareBreakdown.gst_on_charges.toFixed(2)}</Text>
                   </View>
                 )}
 
                 {/* GST on Platform Fee */}
-                {fareBreakdown.gst_platform_fee > 0 && (
+                {fareBreakdown.gst_on_platform_fee > 0 && (
                   <View style={styles.fareItem}>
                     <Text style={styles.fareLabel}>GST on Platform Fee (18%)</Text>
-                    <Text style={styles.fareValue}>₹{fareBreakdown.gst_platform_fee.toFixed(2)}</Text>
+                    <Text style={styles.fareValue}>₹{fareBreakdown.gst_on_platform_fee.toFixed(2)}</Text>
                   </View>
                 )}
 
@@ -559,49 +562,7 @@ export default function TripCompletionModal() {
                   </View>
                 )}
 
-                {/* Extra Time Charges */}
-                {fareBreakdown.extra_time_charges > 0 && (
-                  <View style={styles.fareItem}>
-                    <Text style={styles.fareLabel}>Extra Time Charges</Text>
-                    <Text style={styles.fareValue}>₹{fareBreakdown.extra_time_charges.toFixed(2)}</Text>
-                  </View>
-                )}
-
-                {/* Airport Fee */}
-                {fareBreakdown.airport_fee > 0 && (
-                  <View style={styles.fareItem}>
-                    <Text style={styles.fareLabel}>Airport Fee</Text>
-                    <Text style={styles.fareValue}>₹{fareBreakdown.airport_fee.toFixed(2)}</Text>
-                  </View>
-                )}
-
-                {/* Night Charges */}
-                {fareBreakdown.night_charges > 0 && (
-                  <View style={styles.fareItem}>
-                    <Text style={styles.fareLabel}>Night Charges</Text>
-                    <Text style={styles.fareValue}>₹{fareBreakdown.night_charges.toFixed(2)}</Text>
-                  </View>
-                )}
-
-                {/* Toll/Parking/Waiting/Surge */}
-                {fareBreakdown.toll_charges > 0 && (
-                  <View style={styles.fareItem}>
-                    <Text style={styles.fareLabel}>Toll Charges</Text>
-                    <Text style={styles.fareValue}>₹{fareBreakdown.toll_charges.toFixed(2)}</Text>
-                  </View>
-                )}
-                {fareBreakdown.parking_charges > 0 && (
-                  <View style={styles.fareItem}>
-                    <Text style={styles.fareLabel}>Parking Charges</Text>
-                    <Text style={styles.fareValue}>₹{fareBreakdown.parking_charges.toFixed(2)}</Text>
-                  </View>
-                )}
-                {fareBreakdown.waiting_charges > 0 && (
-                  <View style={styles.fareItem}>
-                    <Text style={styles.fareLabel}>Waiting Charges</Text>
-                    <Text style={styles.fareValue}>₹{fareBreakdown.waiting_charges.toFixed(2)}</Text>
-                  </View>
-                )}
+                {/* Surge Charges */}
                 {fareBreakdown.surge_charges > 0 && (
                   <View style={styles.fareItem}>
                     <Text style={styles.fareLabel}>Surge Charges</Text>
@@ -609,22 +570,13 @@ export default function TripCompletionModal() {
                   </View>
                 )}
 
-                {/* Discount */}
-                {fareBreakdown.discount_amount > 0 && (
-                  <View style={styles.fareItem}>
-                    <Text style={[styles.fareLabel, { color: '#10B981' }]}>Discount</Text>
-                    <Text style={[styles.fareValue, { color: '#10B981' }]}>-₹{fareBreakdown.discount_amount.toFixed(2)}</Text>
-                  </View>
-                )}
-
-                {/* Trip Summary for outstation */}
-                {fareBreakdown.booking_type === 'outstation' && fareBreakdown.rental_hours && (
+                {/* Trip Summary */}
+                {fareBreakdown.actual_distance_km > 0 && fareBreakdown.actual_duration_minutes > 0 && (
                   <View style={styles.fareItem}>
                     <Text style={styles.fareLabel}>
-                      Trip Summary: {fareBreakdown.distance_km.toFixed(1)}km in {Math.round(fareBreakdown.duration_minutes)}min
-                      {'\n'}{fareBreakdown.rental_hours} day trip
+                      Trip Summary: {fareBreakdown.actual_distance_km.toFixed(1)}km in {fareBreakdown.actual_duration_minutes}min
                     </Text>
-                    <Text style={styles.fareValue}>Outstation Trip</Text>
+                    <Text style={styles.fareValue}>{fareBreakdown.booking_type}</Text>
                   </View>
                 )}
 
