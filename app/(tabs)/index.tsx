@@ -19,7 +19,7 @@ import { MapPin, Navigation, ArrowUpDown, Menu, Clock, Plane } from 'lucide-reac
 import * as Location from 'expo-location';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter } from 'expo-router';
-import HosurMapView from '../../src/components/HosurMapView';
+import EnhancedGoogleMapView, { MapRef } from '../../src/components/EnhancedGoogleMapView';
 import EnhancedLocationSearchModal from '../../src/components/EnhancedLocationSearchModal';
 import CustomAlert from '../../src/components/CustomAlert';
 import { fareCalculator, FareBreakdown, FareConfig } from '../../src/services/fareCalculator';
@@ -115,9 +115,10 @@ export default function HomeScreen() {
   const MAX_SHEET_HEIGHT = height * 0.85; // Maximum expanded height
   const pan = useRef(new Animated.Value(height - MIN_SHEET_HEIGHT)).current;
   const scrollViewRef = useRef<ScrollView>(null);
+  const mapRef = useRef<MapRef>(null);
   const [isSheetExpanded, setIsSheetExpanded] = useState(false);
 
-  // Create PanResponder for drag handle
+  // Create PanResponder for drag handle - only handle, not entire sheet
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -141,8 +142,8 @@ export default function HomeScreen() {
           Animated.spring(pan, {
             toValue: height - MAX_SHEET_HEIGHT,
             useNativeDriver: false,
-            tension: 50,
-            friction: 8,
+            damping: 20,
+            stiffness: 100,
           }).start();
           setIsSheetExpanded(true);
         } else {
@@ -150,8 +151,8 @@ export default function HomeScreen() {
           Animated.spring(pan, {
             toValue: height - MIN_SHEET_HEIGHT,
             useNativeDriver: false,
-            tension: 50,
-            friction: 8,
+            damping: 20,
+            stiffness: 100,
           }).start();
           setIsSheetExpanded(false);
           // Scroll to top when collapsing
@@ -167,8 +168,8 @@ export default function HomeScreen() {
       Animated.spring(pan, {
         toValue: height - MAX_SHEET_HEIGHT,
         useNativeDriver: false,
-        tension: 50,
-        friction: 8,
+        damping: 20,
+        stiffness: 100,
       }).start();
       setIsSheetExpanded(true);
     }
@@ -1379,13 +1380,14 @@ export default function HomeScreen() {
     <View style={styles.container}>
       {/* Map Container - Full Screen */}
       <View style={styles.mapContainer}>
-        <HosurMapView
-          currentLocation={currentLocation ? {
-            latitude: currentLocation.coords.latitude,
-            longitude: currentLocation.coords.longitude,
-          } : null}
+        <EnhancedGoogleMapView
+          ref={mapRef}
           pickupCoords={pickupCoords}
           destinationCoords={destinationCoords}
+          showUserLocation={true}
+          followUserLocation={!pickupCoords && !destinationCoords}
+          availableDrivers={availableDrivers}
+          style={{ flex: 1 }}
         />
       </View>
 
@@ -1400,9 +1402,10 @@ export default function HomeScreen() {
           ref={scrollViewRef}
           style={styles.scrollView}
           contentContainerStyle={styles.scrollViewContent}
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={isSheetExpanded}
+          showsVerticalScrollIndicator={true}
+          scrollEnabled={true}
           bounces={true}
+          nestedScrollEnabled={true}
         >
           {/* Location inputs */}
           <View style={styles.locationInputs}>
@@ -1652,7 +1655,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollViewContent: {
-    paddingBottom: 120,
+    paddingBottom: 150,
+    flexGrow: 1,
   },
   locationInputs: {
     flexDirection: 'row',
