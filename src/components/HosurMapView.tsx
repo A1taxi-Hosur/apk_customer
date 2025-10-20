@@ -69,10 +69,18 @@ export default function HosurMapView({ currentLocation, pickupCoords, destinatio
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         initialRegion={HOSUR_REGION}
-        showsUserLocation={false}
+        showsUserLocation={true}
         showsMyLocationButton={false}
         onMapReady={() => {
+          console.log('🗺️ Map ready - setting mapReady to true');
           setMapReady(true);
+          // Force animate to Hosur immediately
+          setTimeout(() => {
+            if (mapRef.current) {
+              console.log('🗺️ Forcing initial animation to Hosur');
+              mapRef.current.animateToRegion(HOSUR_REGION, 500);
+            }
+          }, 100);
         }}
         minZoomLevel={10}
         maxZoomLevel={18}

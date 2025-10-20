@@ -11,6 +11,8 @@ import {
   Alert,
   Modal,
   Platform,
+  Animated,
+  PanResponder,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MapPin, Navigation, ArrowUpDown, Menu, Clock, Plane } from 'lucide-react-native';
@@ -107,6 +109,70 @@ export default function HomeScreen() {
   });
   const [isCalculatingFare, setIsCalculatingFare] = useState(false);
   const [allVehicleFares, setAllVehicleFares] = useState<{ [key in VehicleType]?: number }>({});
+
+  // Bottom sheet draggable state
+  const MIN_SHEET_HEIGHT = 350; // Minimum collapsed height
+  const MAX_SHEET_HEIGHT = height * 0.85; // Maximum expanded height
+  const pan = useRef(new Animated.Value(height - MIN_SHEET_HEIGHT)).current;
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [isSheetExpanded, setIsSheetExpanded] = useState(false);
+
+  // Create PanResponder for drag handle
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        return Math.abs(gestureState.dy) > 5;
+      },
+      onPanResponderMove: (_, gestureState) => {
+        const newValue = height - MIN_SHEET_HEIGHT + gestureState.dy;
+        const clampedValue = Math.max(
+          height - MAX_SHEET_HEIGHT,
+          Math.min(height - MIN_SHEET_HEIGHT, newValue)
+        );
+        pan.setValue(clampedValue);
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        const threshold = (MAX_SHEET_HEIGHT + MIN_SHEET_HEIGHT) / 2;
+        const currentHeight = height - pan._value;
+
+        if (gestureState.dy < -50 || currentHeight > threshold) {
+          // Expand
+          Animated.spring(pan, {
+            toValue: height - MAX_SHEET_HEIGHT,
+            useNativeDriver: false,
+            tension: 50,
+            friction: 8,
+          }).start();
+          setIsSheetExpanded(true);
+        } else {
+          // Collapse
+          Animated.spring(pan, {
+            toValue: height - MIN_SHEET_HEIGHT,
+            useNativeDriver: false,
+            tension: 50,
+            friction: 8,
+          }).start();
+          setIsSheetExpanded(false);
+          // Scroll to top when collapsing
+          scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+        }
+      },
+    })
+  ).current;
+
+  // Auto-expand when destination is selected
+  useEffect(() => {
+    if (pickupCoords && destinationCoords) {
+      Animated.spring(pan, {
+        toValue: height - MAX_SHEET_HEIGHT,
+        useNativeDriver: false,
+        tension: 50,
+        friction: 8,
+      }).start();
+      setIsSheetExpanded(true);
+    }
+  }, [pickupCoords, destinationCoords]);
 
   useEffect(() => {
     // Request location permission immediately on mount for all platforms
@@ -1323,14 +1389,19 @@ export default function HomeScreen() {
         />
       </View>
 
-      {/* Bottom Sheet - Scrollable Over Map */}
-      <View style={styles.bottomSheet}>
-        <View style={styles.dragHandle} />
+      {/* Bottom Sheet - Draggable Over Map */}
+      <Animated.View style={[styles.bottomSheet, { top: pan }]}>
+        {/* Drag Handle */}
+        <View {...panResponder.panHandlers} style={styles.dragHandleContainer}>
+          <View style={styles.dragHandle} />
+        </View>
 
         <ScrollView
+          ref={scrollViewRef}
           style={styles.scrollView}
           contentContainerStyle={styles.scrollViewContent}
           showsVerticalScrollIndicator={false}
+          scrollEnabled={isSheetExpanded}
           bounces={true}
         >
           {/* Location inputs */}
@@ -1500,7 +1571,7 @@ export default function HomeScreen() {
             </View>
           )}
         </ScrollView>
-      </View>
+      </Animated.View>
 
       {/* Location search modals */}
       <EnhancedLocationSearchModal
@@ -1553,33 +1624,35 @@ const styles = StyleSheet.create({
   },
   bottomSheet: {
     position: 'absolute',
-    bottom: 0,
     left: 0,
     right: 0,
-    maxHeight: height * 0.75,
+    bottom: 0,
+    height: height,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingTop: 8,
     elevation: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.2,
     shadowRadius: 16,
   },
-  scrollView: {
-    maxHeight: height * 0.75,
-  },
-  scrollViewContent: {
-    paddingBottom: 100,
+  dragHandleContainer: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
   },
   dragHandle: {
-    width: 40,
+    width: 48,
     height: 5,
     backgroundColor: '#D1D5DB',
     borderRadius: 3,
-    alignSelf: 'center',
-    marginBottom: 12,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingBottom: 120,
   },
   locationInputs: {
     flexDirection: 'row',
