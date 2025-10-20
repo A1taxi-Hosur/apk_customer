@@ -1387,6 +1387,10 @@ export default function HomeScreen() {
           showUserLocation={true}
           followUserLocation={!pickupCoords && !destinationCoords}
           availableDrivers={availableDrivers}
+          showRoute={!!(pickupCoords && destinationCoords)}
+          onRouteReady={(result) => {
+            console.log('🗺️ Route calculated:', result);
+          }}
           style={{ flex: 1 }}
         />
       </View>
