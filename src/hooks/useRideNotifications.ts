@@ -26,41 +26,41 @@ export function useRideNotifications() {
       console.log('🎯 [useRideNotifications] useEffect triggered, user ID:', user.id);
       fetchNotifications();
 
-      // Subscribe to new notifications
-      const subscription = realtimeService.subscribeToNotifications(user.id, (newNotification) => {
-        console.warn('🔔 [useRideNotifications] ===== REALTIME NOTIFICATION RECEIVED =====');
-        console.warn('🔔 [useRideNotifications] Notification:', JSON.stringify({
-          id: newNotification.id,
-          type: newNotification.type,
-          status: newNotification.status,
-          title: newNotification.title,
-          rideId: newNotification.data?.ride_id
-        }));
+      // Subscriptions disabled - polling will be used instead for better reliability
+      // const subscription = realtimeService.subscribeToNotifications(user.id, (newNotification) => {
+      //   console.warn('🔔 [useRideNotifications] ===== REALTIME NOTIFICATION RECEIVED =====');
+      //   console.warn('🔔 [useRideNotifications] Notification:', JSON.stringify({
+      //     id: newNotification.id,
+      //     type: newNotification.type,
+      //     status: newNotification.status,
+      //     title: newNotification.title,
+      //     rideId: newNotification.data?.ride_id
+      //   }));
 
-        setNotifications(prev => {
-          // Check if notification already exists
-          const exists = prev.find(n => n.id === newNotification.id);
-          if (exists) {
-            console.warn('🔔 [useRideNotifications] Notification already exists, updating');
-            return prev.map(n => n.id === newNotification.id ? newNotification : n);
-          }
+      //   setNotifications(prev => {
+      //     // Check if notification already exists
+      //     const exists = prev.find(n => n.id === newNotification.id);
+      //     if (exists) {
+      //       console.warn('🔔 [useRideNotifications] Notification already exists, updating');
+      //       return prev.map(n => n.id === newNotification.id ? newNotification : n);
+      //     }
 
-          console.warn('🔔 [useRideNotifications] New notification, adding to list');
-          const updated = [newNotification, ...prev];
-          console.warn('🔔 [useRideNotifications] Updated notifications count:', updated.length);
-          return updated;
-        });
+      //     console.warn('🔔 [useRideNotifications] New notification, adding to list');
+      //     const updated = [newNotification, ...prev];
+      //     console.warn('🔔 [useRideNotifications] Updated notifications count:', updated.length);
+      //     return updated;
+      //   });
 
-        // Update unread count
-        if (newNotification.status === 'unread') {
-          console.warn('🔔 [useRideNotifications] Incrementing unread count');
-          setUnreadCount(prev => prev + 1);
-        }
-      });
+      //   // Update unread count
+      //   if (newNotification.status === 'unread') {
+      //     console.warn('🔔 [useRideNotifications] Incrementing unread count');
+      //     setUnreadCount(prev => prev + 1);
+      //   }
+      // });
 
-      return () => {
-        subscription.unsubscribe();
-      };
+      // return () => {
+      //   subscription.unsubscribe();
+      // };
     }
   }, [user]);
 
