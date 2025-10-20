@@ -13,14 +13,6 @@ import {
   Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-  runOnJS
-} from 'react-native-reanimated';
 import { MapPin, Navigation, ArrowUpDown, Menu, Clock, Plane } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import { useAuth } from '../../src/contexts/AuthContext';
@@ -115,64 +107,6 @@ export default function HomeScreen() {
   });
   const [isCalculatingFare, setIsCalculatingFare] = useState(false);
   const [allVehicleFares, setAllVehicleFares] = useState<{ [key in VehicleType]?: number }>({});
-
-  // Bottom sheet animation
-  const COLLAPSED_HEIGHT = height * 0.45; // Default collapsed height showing inputs and services
-  const EXPANDED_HEIGHT = height * 0.85; // Expanded to show vehicles
-  const translateY = useSharedValue(height - COLLAPSED_HEIGHT);
-  const context = useSharedValue({ y: 0 });
-
-  // Expand bottom sheet when vehicles are loaded
-  useEffect(() => {
-    if (pickupCoords && destinationCoords && vehicles.length > 0) {
-      translateY.value = withSpring(height - EXPANDED_HEIGHT, {
-        damping: 20,
-        stiffness: 90,
-      });
-    } else {
-      translateY.value = withSpring(height - COLLAPSED_HEIGHT, {
-        damping: 20,
-        stiffness: 90,
-      });
-    }
-  }, [pickupCoords, destinationCoords, vehicles.length]);
-
-  const panGesture = Gesture.Pan()
-    .onStart(() => {
-      context.value = { y: translateY.value };
-    })
-    .onUpdate((event) => {
-      const newTranslateY = context.value.y + event.translationY;
-      // Constrain the sheet between collapsed and expanded positions
-      const minY = height - EXPANDED_HEIGHT;
-      const maxY = height - COLLAPSED_HEIGHT;
-      translateY.value = Math.max(minY, Math.min(maxY, newTranslateY));
-    })
-    .onEnd((event) => {
-      const velocityThreshold = 500;
-      const positionThreshold = (height - EXPANDED_HEIGHT + height - COLLAPSED_HEIGHT) / 2;
-
-      // Determine snap position based on velocity or position
-      if (event.velocityY < -velocityThreshold || translateY.value < positionThreshold) {
-        // Snap to expanded
-        translateY.value = withSpring(height - EXPANDED_HEIGHT, {
-          damping: 20,
-          stiffness: 90,
-        });
-      } else {
-        // Snap to collapsed
-        translateY.value = withSpring(height - COLLAPSED_HEIGHT, {
-          damping: 20,
-          stiffness: 90,
-        });
-      }
-    });
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: translateY.value }],
-    };
-  });
 
   useEffect(() => {
     // Request location permission immediately on mount for all platforms
@@ -1389,20 +1323,16 @@ export default function HomeScreen() {
         />
       </View>
 
-      {/* Bottom Sheet - Draggable and Scrollable Over Map */}
-      <GestureDetector gesture={panGesture}>
-        <Animated.View style={[styles.bottomSheet, animatedStyle]}>
-          <View style={styles.dragHandleContainer}>
-            <View style={styles.dragHandle} />
-          </View>
+      {/* Bottom Sheet - Scrollable Over Map */}
+      <View style={styles.bottomSheet}>
+        <View style={styles.dragHandle} />
 
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollViewContent}
-            showsVerticalScrollIndicator={false}
-            bounces={false}
-            scrollEnabled={true}
-          >
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
+          showsVerticalScrollIndicator={false}
+          bounces={true}
+        >
           {/* Location inputs */}
           <View style={styles.locationInputs}>
             <View style={styles.locationDots}>
@@ -1569,9 +1499,8 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
           )}
-          </ScrollView>
-        </Animated.View>
-      </GestureDetector>
+        </ScrollView>
+      </View>
 
       {/* Location search modals */}
       <EnhancedLocationSearchModal
@@ -1624,34 +1553,33 @@ const styles = StyleSheet.create({
   },
   bottomSheet: {
     position: 'absolute',
+    bottom: 0,
     left: 0,
     right: 0,
-    height: height,
+    maxHeight: height * 0.75,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+    paddingTop: 8,
     elevation: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.2,
     shadowRadius: 16,
   },
-  dragHandleContainer: {
-    alignItems: 'center',
-    paddingVertical: 12,
-    cursor: 'grab',
-  },
   scrollView: {
-    flex: 1,
+    maxHeight: height * 0.75,
   },
   scrollViewContent: {
-    paddingBottom: 40,
+    paddingBottom: 100,
   },
   dragHandle: {
     width: 40,
     height: 5,
     backgroundColor: '#D1D5DB',
     borderRadius: 3,
+    alignSelf: 'center',
+    marginBottom: 12,
   },
   locationInputs: {
     flexDirection: 'row',

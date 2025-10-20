@@ -28,14 +28,6 @@ const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 export default function HosurMapView({ currentLocation, pickupCoords, destinationCoords }: HosurMapViewProps) {
   const mapRef = useRef<MapView>(null);
   const [mapReady, setMapReady] = useState(false);
-  const [attempts, setAttempts] = useState(0);
-
-  // Set initial region based on current location or default to Hosur
-  const initialRegion = currentLocation
-    ? { ...currentLocation, latitudeDelta: 0.05, longitudeDelta: 0.05 }
-    : HOSUR_REGION;
-
-  const [currentRegion, setCurrentRegion] = useState(initialRegion);
 
   // Fit map to show both markers when they exist
   useEffect(() => {
@@ -50,25 +42,25 @@ export default function HosurMapView({ currentLocation, pickupCoords, destinatio
 
   // Center map on current location when available (and no route is selected)
   useEffect(() => {
-    if (mapRef.current && currentLocation && !pickupCoords && !destinationCoords && mapReady) {
-      const region = {
-        ...currentLocation,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      };
-      mapRef.current.animateToRegion(region, 500);
+    if (mapRef.current && mapReady) {
+      if (currentLocation && !pickupCoords && !destinationCoords) {
+        // Center on current location
+        const region = {
+          ...currentLocation,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        };
+        setTimeout(() => {
+          mapRef.current?.animateToRegion(region, 1000);
+        }, 300);
+      } else if (!pickupCoords && !destinationCoords) {
+        // Fallback to Hosur if no location available
+        setTimeout(() => {
+          mapRef.current?.animateToRegion(HOSUR_REGION, 1000);
+        }, 300);
+      }
     }
   }, [currentLocation, mapReady, pickupCoords, destinationCoords]);
-
-  // FIX: Start centering immediately on mount, don't wait for onMapReady
-  useEffect(() => {
-    // Set ready immediately
-    const immediateTimer = setTimeout(() => {
-      setMapReady(true);
-    }, 100);
-
-    return () => clearTimeout(immediateTimer);
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -76,19 +68,11 @@ export default function HosurMapView({ currentLocation, pickupCoords, destinatio
         ref={mapRef}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
-        region={currentRegion}
+        initialRegion={HOSUR_REGION}
         showsUserLocation={false}
         showsMyLocationButton={false}
         onMapReady={() => {
-          console.log('🗺️ onMapReady fired!');
           setMapReady(true);
-        }}
-        onLayout={() => {
-          console.log('📐 onLayout fired - map laid out');
-          setTimeout(() => setMapReady(true), 200);
-        }}
-        onRegionChangeComplete={(region) => {
-          setCurrentRegion(region);
         }}
         minZoomLevel={10}
         maxZoomLevel={18}
