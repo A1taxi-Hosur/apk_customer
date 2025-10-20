@@ -209,6 +209,59 @@ export default function DriverSearchScreen() {
     console.error('🚨 [DEBUG] This will cause the component to fail');
   }
 
+  // Function to clean up ride/booking on timeout
+  const cleanupRideOnTimeout = async () => {
+    try {
+      if (rideDetails.rideId) {
+        console.log('🗑️ [DRIVER_SEARCH] Cleaning up timed-out ride:', rideDetails.rideId);
+
+        const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+        const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+        // Cancel the ride via edge function
+        const response = await fetch(`${supabaseUrl}/functions/v1/ride-api/cancel`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseKey}`,
+          },
+          body: JSON.stringify({
+            rideId: rideDetails.rideId,
+            userId: user?.id,
+            reason: 'No driver found within 5 minutes',
+          }),
+        });
+
+        if (response.ok) {
+          console.log('✅ [DRIVER_SEARCH] Ride cleaned up successfully');
+        } else {
+          console.error('❌ [DRIVER_SEARCH] Failed to clean up ride:', await response.text());
+        }
+      } else if (rideDetails.bookingId) {
+        console.log('🗑️ [DRIVER_SEARCH] Cleaning up timed-out booking:', rideDetails.bookingId);
+
+        const { error } = await supabase
+          .from('scheduled_bookings')
+          .update({
+            status: 'cancelled',
+            cancellation_reason: 'No driver found within 5 minutes',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', rideDetails.bookingId)
+          .eq('customer_id', user?.id)
+          .eq('status', 'pending');
+
+        if (error) {
+          console.error('❌ [DRIVER_SEARCH] Failed to clean up booking:', error);
+        } else {
+          console.log('✅ [DRIVER_SEARCH] Booking cleaned up successfully');
+        }
+      }
+    } catch (error) {
+      console.error('❌ [DRIVER_SEARCH] Exception during cleanup:', error);
+    }
+  };
+
   useEffect(() => {
     console.log('🚨 [DEBUG] useEffect for ride monitoring triggered');
 
@@ -286,16 +339,20 @@ export default function DriverSearchScreen() {
     });
 
     // Set timeout for no drivers found
-    const timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(async () => {
       if (searchStatus === 'searching') {
         console.log('⏰ [DRIVER_SEARCH] Search timeout reached (5 minutes)');
-        setSearchStatus('timeout');
 
         // Clear polling intervals
         if (localPollingIntervalId) {
           clearInterval(localPollingIntervalId);
           setPollingIntervalId(null);
         }
+
+        // Clean up the ride/booking record
+        await cleanupRideOnTimeout();
+
+        setSearchStatus('timeout');
       }
     }, SEARCH_TIMEOUT);
 
@@ -315,8 +372,7 @@ export default function DriverSearchScreen() {
 
   // Function to retry driver search
   const retryDriverSearch = () => {
-    console.log('🔄 [DRIVER_SEARCH] Retrying driver search...');
-    setSearchStatus('searching');
+    console.log('🔄 [DRIVER_SEARCH] User wants to search again - navigating to home to create new ride');
 
     // Clear any existing timeout
     if (searchTimeoutId) {
@@ -330,30 +386,8 @@ export default function DriverSearchScreen() {
       setPollingIntervalId(null);
     }
 
-    // Restart polling based on ride type and platform
-    if (rideDetails.rideId && Platform.OS === 'web') {
-      const intervalId = setupRidePolling(rideDetails.rideId);
-      setPollingIntervalId(intervalId);
-    } else if (rideDetails.bookingId && Platform.OS === 'web') {
-      const intervalId = setupBookingPolling(rideDetails.bookingId);
-      setPollingIntervalId(intervalId);
-    }
-
-    // Set new timeout
-    const newTimeoutId = setTimeout(() => {
-      if (searchStatus === 'searching') {
-        console.log('⏰ [DRIVER_SEARCH] Search timeout reached again (5 minutes)');
-        setSearchStatus('timeout');
-
-        // Clear polling on timeout
-        if (pollingIntervalId) {
-          clearInterval(pollingIntervalId);
-          setPollingIntervalId(null);
-        }
-      }
-    }, SEARCH_TIMEOUT);
-
-    setSearchTimeoutId(newTimeoutId);
+    // Navigate back to home screen so user can create a new ride
+    router.replace('/(tabs)');
   };
 
   // Setup polling for ride updates (web platform)
