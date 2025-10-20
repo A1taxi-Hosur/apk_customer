@@ -171,7 +171,7 @@ export default function DriverSearchScreen() {
 
   console.log('🚨 [DEBUG] DriverSearchScreen state initialized');
 
-  const SEARCH_TIMEOUT = 120000; // 2 minutes
+  const SEARCH_TIMEOUT = 300000; // 5 minutes
   const POLL_INTERVAL = 2000; // 2 seconds - more frequent polling
 
   // Parse ride details from params
@@ -288,7 +288,7 @@ export default function DriverSearchScreen() {
     // Set timeout for no drivers found
     const timeoutId = setTimeout(() => {
       if (searchStatus === 'searching') {
-        console.log('⏰ [DRIVER_SEARCH] Search timeout reached (2 minutes)');
+        console.log('⏰ [DRIVER_SEARCH] Search timeout reached (5 minutes)');
         setSearchStatus('timeout');
 
         // Clear polling intervals
@@ -342,7 +342,7 @@ export default function DriverSearchScreen() {
     // Set new timeout
     const newTimeoutId = setTimeout(() => {
       if (searchStatus === 'searching') {
-        console.log('⏰ [DRIVER_SEARCH] Search timeout reached again (2 minutes)');
+        console.log('⏰ [DRIVER_SEARCH] Search timeout reached again (5 minutes)');
         setSearchStatus('timeout');
 
         // Clear polling on timeout
@@ -958,16 +958,16 @@ export default function DriverSearchScreen() {
             {searchStatus === 'timeout' && (
               <View style={styles.timeoutContainer}>
                 <Clock size={48} color="#DC2626" />
-                <Text style={styles.timeoutTitle}>No Drivers Available</Text>
+                <Text style={styles.timeoutTitle}>No Drivers Nearby</Text>
                 <Text style={styles.timeoutMessage}>
-                  Sorry, no drivers are available at the moment. This could be due to high demand or limited drivers in your area.
+                  Sorry, no drivers accepted your ride in the last 5 minutes. This could be due to high demand or limited drivers in your area.
                 </Text>
                 <TouchableOpacity
                   style={styles.tryAgainButton}
                   onPress={retryDriverSearch}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.tryAgainButtonText}>Try Again</Text>
+                  <Text style={styles.tryAgainButtonText}>Search Again</Text>
                 </TouchableOpacity>
               </View>
             )}
