@@ -84,7 +84,7 @@ export default function SimpleHosurMap({
       showsMyLocationButton={true}
       onRegionChangeComplete={handleRegionChangeComplete}
     >
-      {!showCenteredPin && pickupLocation && (
+      {pickupLocation && destinationLocation && (
         <Marker
           coordinate={pickupLocation}
           title="Pickup"
