@@ -19,7 +19,7 @@ import { MapPin, Navigation, ArrowUpDown, Menu, Clock, Plane } from 'lucide-reac
 import * as Location from 'expo-location';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter } from 'expo-router';
-import EnhancedGoogleMapView, { MapRef } from '../../src/components/EnhancedGoogleMapView';
+import CustomerMap from '../../src/components/CustomerMap';
 import EnhancedLocationSearchModal from '../../src/components/EnhancedLocationSearchModal';
 import CustomAlert from '../../src/components/CustomAlert';
 import { fareCalculator, FareBreakdown, FareConfig } from '../../src/services/fareCalculator';
@@ -115,7 +115,6 @@ export default function HomeScreen() {
   const MAX_SHEET_HEIGHT = height * 0.85; // Maximum expanded height
   const pan = useRef(new Animated.Value(height - MIN_SHEET_HEIGHT)).current;
   const scrollViewRef = useRef<ScrollView>(null);
-  const mapRef = useRef<MapRef>(null);
   const [isSheetExpanded, setIsSheetExpanded] = useState(false);
 
   // Create PanResponder for drag handle - only handle, not entire sheet
@@ -1380,34 +1379,38 @@ export default function HomeScreen() {
     <View style={styles.container}>
       {/* Map Container - Full Screen */}
       <View style={styles.mapContainer}>
-        <EnhancedGoogleMapView
-          ref={mapRef}
-          initialRegion={
+        <CustomerMap
+          userLocation={
             currentLocation
               ? {
                   latitude: currentLocation.coords.latitude,
                   longitude: currentLocation.coords.longitude,
-                  latitudeDelta: 0.05,
-                  longitudeDelta: 0.05,
                 }
-              : {
-                  latitude: 12.7402,
-                  longitude: 77.8240,
-                  latitudeDelta: 0.05,
-                  longitudeDelta: 0.05,
-                }
+              : null
           }
-          pickupCoords={pickupCoords}
-          destinationCoords={destinationCoords}
-          showUserLocation={true}
-          followUserLocation={!pickupCoords && !destinationCoords}
-          availableDrivers={availableDrivers}
-          showRoute={!!(pickupCoords && destinationCoords)}
-          onRouteReady={(result) => {
-            console.log('🗺️ Route calculated:', result);
+          pickupLocation={pickupCoords}
+          destinationLocation={destinationCoords}
+          onRouteReady={(distance, duration) => {
+            console.log('🗺️ Route ready:', distance, 'km,', duration, 'min');
           }}
-          style={{ flex: 1 }}
         />
+
+        {/* DEBUG PANEL - Remove after testing */}
+        <View style={styles.debugPanel}>
+          <Text style={styles.debugTitle}>MAP DEBUG</Text>
+          <Text style={styles.debugText}>
+            User: {currentLocation ? `✅ ${currentLocation.coords.latitude.toFixed(4)}, ${currentLocation.coords.longitude.toFixed(4)}` : '❌ No location'}
+          </Text>
+          <Text style={styles.debugText}>
+            Pickup: {pickupCoords ? `✅ ${pickupCoords.latitude.toFixed(4)}, ${pickupCoords.longitude.toFixed(4)}` : '❌ Not set'}
+          </Text>
+          <Text style={styles.debugText}>
+            Destination: {destinationCoords ? `✅ ${destinationCoords.latitude.toFixed(4)}, ${destinationCoords.longitude.toFixed(4)}` : '❌ Not set'}
+          </Text>
+          <Text style={styles.debugText}>
+            Route: {pickupCoords && destinationCoords ? '✅ Should draw' : '❌ Waiting for both locations'}
+          </Text>
+        </View>
       </View>
 
       {/* Bottom Sheet - Draggable Over Map */}
@@ -1892,5 +1895,27 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: '#6B7280',
+  },
+  debugPanel: {
+    position: 'absolute',
+    top: 60,
+    left: 10,
+    right: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    padding: 12,
+    borderRadius: 8,
+    zIndex: 1000,
+  },
+  debugTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  debugText: {
+    fontSize: 11,
+    color: '#FFFFFF',
+    marginVertical: 2,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
 });
