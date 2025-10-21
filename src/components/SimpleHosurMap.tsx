@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 
 interface SimpleHosurMapProps {
@@ -27,7 +27,7 @@ export default function SimpleHosurMap({
 
   useEffect(() => {
     if (mapRef.current && userLocation) {
-      console.log('📍 Animating to user location:', userLocation);
+      console.log('📍 [MAP] Animating to user location:', userLocation);
       mapRef.current.animateToRegion(
         {
           ...userLocation,
@@ -41,7 +41,7 @@ export default function SimpleHosurMap({
 
   useEffect(() => {
     if (mapRef.current && pickupLocation && destinationLocation) {
-      console.log('🗺️ Fitting map to show route');
+      console.log('🗺️ [MAP] Fitting map to show route');
       mapRef.current.fitToCoordinates([pickupLocation, destinationLocation], {
         edgePadding: { top: 100, right: 50, bottom: 300, left: 50 },
         animated: true,
@@ -49,33 +49,51 @@ export default function SimpleHosurMap({
     }
   }, [pickupLocation, destinationLocation]);
 
+  console.log('🗺️ [MAP] Rendering with:', {
+    userLocation,
+    pickupLocation,
+    destinationLocation,
+  });
+
   return (
     <MapView
       ref={mapRef}
       style={styles.map}
       provider={PROVIDER_GOOGLE}
-      initialRegion={HOSUR_CENTER}
+      initialRegion={userLocation || HOSUR_CENTER}
       showsUserLocation={false}
       showsMyLocationButton={true}
     >
       {userLocation && (
         <Marker
-          coordinate={userLocation}
-          title="Your Location"
+          coordinate={{
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+          }}
+          title="You are here"
+          description="Your current location"
           pinColor="blue"
         />
       )}
       {pickupLocation && (
         <Marker
-          coordinate={pickupLocation}
+          coordinate={{
+            latitude: pickupLocation.latitude,
+            longitude: pickupLocation.longitude,
+          }}
           title="Pickup"
+          description="Pickup location"
           pinColor="green"
         />
       )}
       {destinationLocation && (
         <Marker
-          coordinate={destinationLocation}
+          coordinate={{
+            latitude: destinationLocation.latitude,
+            longitude: destinationLocation.longitude,
+          }}
           title="Destination"
+          description="Drop-off location"
           pinColor="red"
         />
       )}
@@ -88,10 +106,10 @@ export default function SimpleHosurMap({
           strokeColor="#1F2937"
           optimizeWaypoints={true}
           onReady={(result) => {
-            console.log('🗺️ Route ready:', result.distance, 'km,', result.duration, 'min');
+            console.log('🗺️ [MAP] Route ready:', result.distance, 'km,', result.duration, 'min');
           }}
           onError={(errorMessage) => {
-            console.error('🗺️ Route error:', errorMessage);
+            console.error('🗺️ [MAP] Route error:', errorMessage);
           }}
         />
       )}
