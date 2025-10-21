@@ -29,6 +29,17 @@ export default function SimpleHosurMap({
   onDestinationDragEnd,
   showCenteredPin = false,
 }: SimpleHosurMapProps) {
+  console.log('🗺️ [SIMPLE-MAP] ===== RENDERING MAP =====');
+  console.log('🗺️ [SIMPLE-MAP] Props received:', {
+    hasUserLocation: !!userLocation,
+    hasPickupLocation: !!pickupLocation,
+    hasDestinationLocation: !!destinationLocation,
+    showCenteredPin,
+    userLocation,
+    pickupLocation,
+    destinationLocation
+  });
+
   const mapRef = useRef<MapView>(null);
 
   const handleRegionChangeComplete = (region: any) => {
@@ -93,53 +104,67 @@ export default function SimpleHosurMap({
       mapPadding={{ top: 0, right: 0, bottom: 0, left: 0 }}
     >
       {/* Pickup Marker - Always show when pickup location exists */}
-      {pickupLocation && (
-        <Marker
-          coordinate={pickupLocation}
-          title="Pickup Location"
-          description="Your starting point"
-          identifier="pickup"
-          draggable
-          onDragEnd={(e) => {
-            const newCoords = e.nativeEvent.coordinate;
-            console.log('📍 [MAP] Pickup marker dragged to:', newCoords);
-            if (onRegionChangeComplete) {
-              onRegionChangeComplete(newCoords);
-            }
-          }}
-        >
-          <View style={styles.pickupMarker}>
-            <View style={styles.pickupMarkerInner}>
-              <Text style={styles.markerIcon}>📍</Text>
-            </View>
-            <View style={styles.markerShadow} />
-          </View>
-        </Marker>
+      {pickupLocation ? (
+        (() => {
+          console.log('✅ [SIMPLE-MAP] RENDERING PICKUP MARKER:', pickupLocation);
+          return (
+            <Marker
+              coordinate={pickupLocation}
+              title="Pickup Location"
+              description="Your starting point"
+              identifier="pickup"
+              draggable
+              onDragEnd={(e) => {
+                const newCoords = e.nativeEvent.coordinate;
+                console.log('📍 [MAP] Pickup marker dragged to:', newCoords);
+                if (onRegionChangeComplete) {
+                  onRegionChangeComplete(newCoords);
+                }
+              }}
+            >
+              <View style={styles.pickupMarker}>
+                <View style={styles.pickupMarkerInner}>
+                  <Text style={styles.markerIcon}>📍</Text>
+                </View>
+                <View style={styles.markerShadow} />
+              </View>
+            </Marker>
+          );
+        })()
+      ) : (
+        console.log('❌ [SIMPLE-MAP] NOT rendering pickup marker - pickupLocation is:', pickupLocation) || null
       )}
 
       {/* Destination Marker - Always show when destination exists */}
-      {destinationLocation && (
-        <Marker
-          coordinate={destinationLocation}
-          title="Destination"
-          description="Your drop-off point"
-          identifier="destination"
-          draggable
-          onDragEnd={(e) => {
-            const newCoords = e.nativeEvent.coordinate;
-            console.log('🎯 [MAP] Destination marker dragged to:', newCoords);
-            if (onDestinationDragEnd) {
-              onDestinationDragEnd(newCoords);
-            }
-          }}
-        >
-          <View style={styles.destinationMarker}>
-            <View style={styles.destinationMarkerInner}>
-              <Text style={styles.markerIcon}>🎯</Text>
-            </View>
-            <View style={styles.markerShadow} />
-          </View>
-        </Marker>
+      {destinationLocation ? (
+        (() => {
+          console.log('✅ [SIMPLE-MAP] RENDERING DESTINATION MARKER:', destinationLocation);
+          return (
+            <Marker
+              coordinate={destinationLocation}
+              title="Destination"
+              description="Your drop-off point"
+              identifier="destination"
+              draggable
+              onDragEnd={(e) => {
+                const newCoords = e.nativeEvent.coordinate;
+                console.log('🎯 [MAP] Destination marker dragged to:', newCoords);
+                if (onDestinationDragEnd) {
+                  onDestinationDragEnd(newCoords);
+                }
+              }}
+            >
+              <View style={styles.destinationMarker}>
+                <View style={styles.destinationMarkerInner}>
+                  <Text style={styles.markerIcon}>🎯</Text>
+                </View>
+                <View style={styles.markerShadow} />
+              </View>
+            </Marker>
+          );
+        })()
+      ) : (
+        console.log('❌ [SIMPLE-MAP] NOT rendering destination marker - destinationLocation is:', destinationLocation) || null
       )}
 
       {/* Route Line - Show when both locations exist */}
