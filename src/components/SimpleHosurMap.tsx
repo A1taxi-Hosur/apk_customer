@@ -143,25 +143,42 @@ export default function SimpleHosurMap({
       )}
 
       {/* Route Line - Show when both locations exist */}
-      {pickupLocation && destinationLocation && GOOGLE_MAPS_API_KEY && (
+      {pickupLocation && destinationLocation && GOOGLE_MAPS_API_KEY ? (
         <MapViewDirections
           origin={pickupLocation}
           destination={destinationLocation}
           apikey={GOOGLE_MAPS_API_KEY}
-          strokeWidth={5}
+          strokeWidth={6}
           strokeColor="#2563EB"
           optimizeWaypoints={true}
+          precision="high"
+          mode="DRIVING"
           onReady={(result) => {
-            console.log('🗺️ [MAP] Route calculated:', {
+            console.log('✅ [MAP] Route successfully drawn:', {
               distance: `${result.distance.toFixed(1)} km`,
               duration: `${Math.round(result.duration)} min`,
-              coordinates: result.coordinates.length
+              coordinates: result.coordinates.length,
+              pickup: pickupLocation,
+              destination: destinationLocation
             });
           }}
           onError={(errorMessage) => {
-            console.error('🗺️ [MAP] Route calculation error:', errorMessage);
+            console.error('❌ [MAP] Route calculation error:', errorMessage);
+            console.error('❌ [MAP] Failed route details:', {
+              pickup: pickupLocation,
+              destination: destinationLocation,
+              apiKeyExists: !!GOOGLE_MAPS_API_KEY
+            });
           }}
         />
+      ) : (
+        console.log('⚠️ [MAP] Route not rendered. Missing:', {
+          hasPickup: !!pickupLocation,
+          hasDestination: !!destinationLocation,
+          hasApiKey: !!GOOGLE_MAPS_API_KEY,
+          pickupLocation,
+          destinationLocation
+        }) || null
       )}
     </MapView>
   );

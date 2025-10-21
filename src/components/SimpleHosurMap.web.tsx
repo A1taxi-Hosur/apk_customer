@@ -5,6 +5,9 @@ interface SimpleHosurMapProps {
   userLocation: { latitude: number; longitude: number } | null;
   pickupLocation?: { latitude: number; longitude: number } | null;
   destinationLocation?: { latitude: number; longitude: number } | null;
+  onRegionChangeComplete?: (coords: { latitude: number; longitude: number }) => void;
+  onDestinationDragEnd?: (coords: { latitude: number; longitude: number }) => void;
+  showCenteredPin?: boolean;
 }
 
 const HOSUR_CENTER = {
@@ -16,6 +19,9 @@ export default function SimpleHosurMap({
   userLocation,
   pickupLocation,
   destinationLocation,
+  onRegionChangeComplete,
+  onDestinationDragEnd,
+  showCenteredPin = false,
 }: SimpleHosurMapProps) {
   const mapRef = useRef<any>(null);
   const directionsServiceRef = useRef<any>(null);
@@ -99,12 +105,13 @@ export default function SimpleHosurMap({
       pickupMarkerRef.current.setMap(null);
     }
 
-    // Only show pickup marker when destination is also selected
-    if (pickupLocation && destinationLocation) {
+    // Show pickup marker whenever pickup location exists
+    if (pickupLocation) {
       pickupMarkerRef.current = new window.google.maps.Marker({
         position: { lat: pickupLocation.latitude, lng: pickupLocation.longitude },
         map: mapRef.current,
         title: 'Pickup Location',
+        draggable: true,
         label: {
           text: '📍',
           fontSize: '24px',
@@ -118,6 +125,18 @@ export default function SimpleHosurMap({
           strokeWeight: 3,
         },
       });
+
+      // Add drag end listener
+      if (onRegionChangeComplete) {
+        window.google.maps.event.addListener(pickupMarkerRef.current, 'dragend', (event: any) => {
+          const newPosition = event.latLng;
+          console.log('📍 [WEB] Pickup marker dragged to:', newPosition.lat(), newPosition.lng());
+          onRegionChangeComplete({
+            latitude: newPosition.lat(),
+            longitude: newPosition.lng(),
+          });
+        });
+      }
     }
   }, [pickupLocation, destinationLocation]);
 
@@ -133,6 +152,7 @@ export default function SimpleHosurMap({
         position: { lat: destinationLocation.latitude, lng: destinationLocation.longitude },
         map: mapRef.current,
         title: 'Destination',
+        draggable: true,
         label: {
           text: '🎯',
           fontSize: '24px',
@@ -146,6 +166,18 @@ export default function SimpleHosurMap({
           strokeWeight: 3,
         },
       });
+
+      // Add drag end listener
+      if (onDestinationDragEnd) {
+        window.google.maps.event.addListener(destinationMarkerRef.current, 'dragend', (event: any) => {
+          const newPosition = event.latLng;
+          console.log('🎯 [WEB] Destination marker dragged to:', newPosition.lat(), newPosition.lng());
+          onDestinationDragEnd({
+            latitude: newPosition.lat(),
+            longitude: newPosition.lng(),
+          });
+        });
+      }
     }
   }, [destinationLocation]);
 
@@ -175,9 +207,13 @@ export default function SimpleHosurMap({
             left: 80,
           });
 
-          console.log('🗺️ [WEB] Route calculated and map fitted to bounds');
+          console.log('✅ [WEB] Route successfully drawn from pickup to destination');
         } else {
-          console.error('🗺️ [WEB] Directions request failed:', status);
+          console.error('❌ [WEB] Directions request failed:', status);
+          console.error('❌ [WEB] Failed route details:', {
+            pickup: pickupLocation,
+            destination: destinationLocation,
+          });
         }
       });
     } else {
