@@ -111,7 +111,7 @@ export default function HomeScreen() {
   const [isCalculatingFare, setIsCalculatingFare] = useState(false);
   const [allVehicleFares, setAllVehicleFares] = useState<{ [key in VehicleType]?: number }>({});
   const [locationWatcher, setLocationWatcher] = useState<Location.LocationSubscription | null>(null);
-  const [reverseGeocodeTimer, setReverseGeocodeTimer] = useState<NodeJS.Timeout | null>(null);
+  const reverseGeocodeTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Bottom sheet draggable state
   const MIN_SHEET_HEIGHT = 350; // Minimum collapsed height
@@ -186,8 +186,8 @@ export default function HomeScreen() {
     // Cleanup polling, GPS watcher, and timers on unmount
     return () => {
       stopDriverLocationPolling();
-      if (reverseGeocodeTimer) {
-        clearTimeout(reverseGeocodeTimer);
+      if (reverseGeocodeTimer.current) {
+        clearTimeout(reverseGeocodeTimer.current);
       }
     };
   }, []);
@@ -1429,19 +1429,17 @@ export default function HomeScreen() {
       setPickupCoords(coords);
 
       // Clear previous timer
-      if (reverseGeocodeTimer) {
-        clearTimeout(reverseGeocodeTimer);
+      if (reverseGeocodeTimer.current) {
+        clearTimeout(reverseGeocodeTimer.current);
       }
 
       // Debounce reverse geocoding - only call after user stops moving map for 500ms
-      const timer = setTimeout(async () => {
+      reverseGeocodeTimer.current = setTimeout(async () => {
         console.log('🏠 [MAP] Reverse geocoding pickup location...');
         const address = await googleMapsService.reverseGeocode(coords.latitude, coords.longitude);
         console.log('✅ [MAP] Pickup address:', address);
         setPickupLocation(address);
       }, 500);
-
-      setReverseGeocodeTimer(timer);
     }
   };
 
