@@ -1,5 +1,8 @@
 import { Ride } from '../types/database';
 import { supabase } from '../utils/supabase';
+import { Platform, Alert, Share } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 interface BillData {
   ride: Ride & {
@@ -175,24 +178,44 @@ class BillService {
 
       const htmlContent = this.generateBillHTML(billData);
 
-      // Create blob and download
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
+      if (Platform.OS === 'web') {
+        // Web platform: download as file
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
 
-      // Create download link
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `A1Taxi_Bill_${ride.ride_code}_${new Date().toISOString().split('T')[0]}.html`;
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `A1Taxi_Bill_${ride.ride_code}_${new Date().toISOString().split('T')[0]}.html`;
 
-      // Trigger download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
-      // Clean up
-      URL.revokeObjectURL(url);
+        URL.revokeObjectURL(url);
+        console.log('✅ [BILL] Bill downloaded successfully (web)');
+      } else {
+        // Mobile platform: save to file system and share
+        const fileName = `A1Taxi_Bill_${ride.ride_code}_${new Date().toISOString().split('T')[0]}.html`;
+        const fileUri = `${FileSystem.documentDirectory}${fileName}`;
 
-      console.log('✅ [BILL] Bill downloaded successfully');
+        await FileSystem.writeAsStringAsync(fileUri, htmlContent, {
+          encoding: FileSystem.EncodingType.UTF8,
+        });
+
+        console.log('✅ [BILL] Bill saved to:', fileUri);
+
+        // Check if sharing is available
+        const isSharingAvailable = await Sharing.isAvailableAsync();
+        if (isSharingAvailable) {
+          await Sharing.shareAsync(fileUri, {
+            mimeType: 'text/html',
+            dialogTitle: 'Save or Share Bill',
+          });
+          console.log('✅ [BILL] Bill shared successfully (mobile)');
+        } else {
+          Alert.alert('Success', `Bill saved to: ${fileUri}`);
+        }
+      }
     } catch (error) {
       console.error('❌ [BILL] Error downloading bill:', error);
       throw error;

@@ -304,7 +304,6 @@ export default function ProfileScreen() {
             
             <View style={styles.userInfo}>
               <Text style={styles.userName}>{user?.full_name}</Text>
-              <Text style={styles.userRole}>Customer</Text>
             </View>
           </View>
 
@@ -663,6 +662,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
+    overflow: 'hidden',
   },
   contentModalHeader: {
     flexDirection: 'row',
@@ -684,11 +684,13 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   contentScrollView: {
+    flex: 1,
     padding: 20,
   },
   contentText: {
     fontSize: 14,
     color: '#374151',
     lineHeight: 22,
+    paddingBottom: 20,
   },
 });
