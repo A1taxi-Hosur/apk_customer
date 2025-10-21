@@ -7,6 +7,8 @@ interface SimpleHosurMapProps {
   userLocation: { latitude: number; longitude: number } | null;
   pickupLocation?: { latitude: number; longitude: number } | null;
   destinationLocation?: { latitude: number; longitude: number } | null;
+  onRegionChangeComplete?: (coords: { latitude: number; longitude: number }) => void;
+  showCenteredPin?: boolean;
 }
 
 const HOSUR_CENTER = {
@@ -22,14 +24,42 @@ export default function SimpleHosurMap({
   userLocation,
   pickupLocation,
   destinationLocation,
+  onRegionChangeComplete,
+  showCenteredPin = false,
 }: SimpleHosurMapProps) {
   const mapRef = useRef<MapView>(null);
 
+  const handleRegionChangeComplete = (region: any) => {
+    if (onRegionChangeComplete && !destinationLocation) {
+      onRegionChangeComplete({
+        latitude: region.latitude,
+        longitude: region.longitude,
+      });
+    }
+  };
+
+  // Smooth animation to follow user location (Uber-style)
+  useEffect(() => {
+    if (mapRef.current && userLocation && !destinationLocation) {
+      console.log('🗺️ [MAP] Smoothly animating to user location');
+      mapRef.current.animateToRegion(
+        {
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        },
+        800
+      );
+    }
+  }, [userLocation]);
+
+  // Fit to route when both locations are selected
   useEffect(() => {
     if (mapRef.current && pickupLocation && destinationLocation) {
       console.log('🗺️ [MAP] Fitting map to show route');
       mapRef.current.fitToCoordinates([pickupLocation, destinationLocation], {
-        edgePadding: { top: 100, right: 50, bottom: 300, left: 50 },
+        edgePadding: { top: 100, right: 100, bottom: 300, left: 100 },
         animated: true,
       });
     }
@@ -40,20 +70,21 @@ export default function SimpleHosurMap({
       ref={mapRef}
       style={styles.map}
       provider={PROVIDER_GOOGLE}
-      region={
+      initialRegion={
         userLocation
           ? {
               latitude: userLocation.latitude,
               longitude: userLocation.longitude,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.05,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
             }
           : HOSUR_CENTER
       }
       showsUserLocation={true}
       showsMyLocationButton={true}
+      onRegionChangeComplete={handleRegionChangeComplete}
     >
-      {pickupLocation && (
+      {!showCenteredPin && pickupLocation && (
         <Marker
           coordinate={pickupLocation}
           title="Pickup"
