@@ -69,6 +69,15 @@ const EnhancedGoogleMapView = forwardRef<MapRef, EnhancedGoogleMapViewProps>(({
     console.warn('🗺️ [NATIVE-MAP] destinationCoords:', JSON.stringify(destinationCoords));
   }, []);
 
+  // Update map region when initialRegion prop changes (e.g., when location loads)
+  useEffect(() => {
+    if (initialRegion && isMapReady && mapRef.current) {
+      console.warn('🗺️ [NATIVE-MAP] Initial region prop changed, animating to:', JSON.stringify(initialRegion));
+      setMapRegion(initialRegion);
+      mapRef.current.animateToRegion(initialRegion, 1000);
+    }
+  }, [initialRegion?.latitude, initialRegion?.longitude, isMapReady]);
+
   // Debug props when they change
   useEffect(() => {
     console.log('🗺️ [MAP] Props updated:', {

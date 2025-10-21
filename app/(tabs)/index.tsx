@@ -1382,6 +1382,21 @@ export default function HomeScreen() {
       <View style={styles.mapContainer}>
         <EnhancedGoogleMapView
           ref={mapRef}
+          initialRegion={
+            currentLocation
+              ? {
+                  latitude: currentLocation.coords.latitude,
+                  longitude: currentLocation.coords.longitude,
+                  latitudeDelta: 0.05,
+                  longitudeDelta: 0.05,
+                }
+              : {
+                  latitude: 12.7402,
+                  longitude: 77.8240,
+                  latitudeDelta: 0.05,
+                  longitudeDelta: 0.05,
+                }
+          }
           pickupCoords={pickupCoords}
           destinationCoords={destinationCoords}
           showUserLocation={true}
