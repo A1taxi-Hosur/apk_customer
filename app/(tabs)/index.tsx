@@ -180,12 +180,33 @@ export default function HomeScreen() {
     requestLocationPermissionOnMount();
     loadVehicleTypes();
     loadActiveZones();
-    startLiveGPSTracking();
 
     // Cleanup polling and GPS watcher on unmount
     return () => {
       stopDriverLocationPolling();
+    };
+  }, []);
+
+  // Separate effect for GPS tracking - starts after permission is granted
+  useEffect(() => {
+    let watcher: Location.LocationSubscription | null = null;
+
+    const initGPSTracking = async () => {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      if (status === 'granted') {
+        await startLiveGPSTracking();
+      }
+    };
+
+    // Delay GPS tracking start slightly to ensure permissions are ready
+    const timer = setTimeout(() => {
+      initGPSTracking();
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
       if (locationWatcher) {
+        console.log('🛑 [GPS] Cleaning up location watcher');
         locationWatcher.remove();
       }
     };
@@ -228,9 +249,10 @@ export default function HomeScreen() {
     try {
       console.log('📍 [GPS] Starting live GPS tracking (Uber-style)...');
 
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      // Check if we already have permission (requested earlier)
+      const { status } = await Location.getForegroundPermissionsAsync();
       if (status !== 'granted') {
-        console.log('❌ [GPS] Permission to access location was denied');
+        console.log('❌ [GPS] Location permission not granted, skipping GPS tracking');
         return;
       }
 
@@ -248,16 +270,8 @@ export default function HomeScreen() {
             accuracy: position.coords.accuracy?.toFixed(2) + 'm',
           });
 
+          // Always update currentLocation for map tracking
           setCurrentLocation(position);
-
-          // Auto-update pickup location if not set yet or if no route is being shown
-          if (!pickupCoords || (!destinationCoords)) {
-            setPickupLocation('Current Location');
-            setPickupCoords({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
-          }
         }
       );
 
@@ -1404,11 +1418,15 @@ export default function HomeScreen() {
 
   // Handle map region change to update pickup location (Uber-style centered pin)
   const handleMapRegionChange = (coords: { latitude: number; longitude: number }) => {
+    // Only update if no destination is set (i.e., user is selecting pickup location)
     if (!destinationLocation) {
       console.log('🗺️ [MAP] Region changed, updating pickup coords:', coords);
       setPickupCoords(coords);
-      // Optionally reverse geocode to get address
-      setPickupLocation('Current Location');
+
+      // Update pickup location text to show we're tracking the map center
+      if (pickupLocation === 'Current Location' || pickupLocation === '') {
+        setPickupLocation('Current Location');
+      }
     }
   };
 
