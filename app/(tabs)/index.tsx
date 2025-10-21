@@ -26,6 +26,7 @@ import { fareCalculator, FareBreakdown, FareConfig } from '../../src/services/fa
 import { enhancedLocationService } from '../../src/services/enhancedLocationService';
 import { rideService } from '../../src/services/rideService';
 import { zoneService } from '../../src/services/zoneService';
+import { googleMapsService } from '../../src/services/googleMapsService';
 import { isPointInAnyActiveZone } from '../../src/utils/zoneHelpers';
 import { DEFAULT_REGION } from '../../src/config/maps';
 import { useRideNotifications } from '../../src/hooks/useRideNotifications';
@@ -110,6 +111,7 @@ export default function HomeScreen() {
   const [isCalculatingFare, setIsCalculatingFare] = useState(false);
   const [allVehicleFares, setAllVehicleFares] = useState<{ [key in VehicleType]?: number }>({});
   const [locationWatcher, setLocationWatcher] = useState<Location.LocationSubscription | null>(null);
+  const [reverseGeocodeTimer, setReverseGeocodeTimer] = useState<NodeJS.Timeout | null>(null);
 
   // Bottom sheet draggable state
   const MIN_SHEET_HEIGHT = 350; // Minimum collapsed height
@@ -181,9 +183,12 @@ export default function HomeScreen() {
     loadVehicleTypes();
     loadActiveZones();
 
-    // Cleanup polling and GPS watcher on unmount
+    // Cleanup polling, GPS watcher, and timers on unmount
     return () => {
       stopDriverLocationPolling();
+      if (reverseGeocodeTimer) {
+        clearTimeout(reverseGeocodeTimer);
+      }
     };
   }, []);
 
@@ -1417,16 +1422,26 @@ export default function HomeScreen() {
   };
 
   // Handle map region change to update pickup location (Uber-style centered pin)
-  const handleMapRegionChange = (coords: { latitude: number; longitude: number }) => {
+  const handleMapRegionChange = async (coords: { latitude: number; longitude: number }) => {
     // Only update if no destination is set (i.e., user is selecting pickup location)
-    if (!destinationLocation) {
+    if (!destinationCoords) {
       console.log('🗺️ [MAP] Region changed, updating pickup coords:', coords);
       setPickupCoords(coords);
 
-      // Update pickup location text to show we're tracking the map center
-      if (pickupLocation === 'Current Location' || pickupLocation === '') {
-        setPickupLocation('Current Location');
+      // Clear previous timer
+      if (reverseGeocodeTimer) {
+        clearTimeout(reverseGeocodeTimer);
       }
+
+      // Debounce reverse geocoding - only call after user stops moving map for 500ms
+      const timer = setTimeout(async () => {
+        console.log('🏠 [MAP] Reverse geocoding pickup location...');
+        const address = await googleMapsService.reverseGeocode(coords.latitude, coords.longitude);
+        console.log('✅ [MAP] Pickup address:', address);
+        setPickupLocation(address);
+      }, 500);
+
+      setReverseGeocodeTimer(timer);
     }
   };
 
