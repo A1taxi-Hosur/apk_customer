@@ -19,7 +19,7 @@ import { MapPin, Navigation, ArrowUpDown, Menu, Clock, Plane } from 'lucide-reac
 import * as Location from 'expo-location';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter } from 'expo-router';
-import CustomerMap from '../../src/components/CustomerMap';
+import SimpleHosurMap from '../../src/components/SimpleHosurMap';
 import EnhancedLocationSearchModal from '../../src/components/EnhancedLocationSearchModal';
 import CustomAlert from '../../src/components/CustomAlert';
 import { fareCalculator, FareBreakdown, FareConfig } from '../../src/services/fareCalculator';
@@ -1379,7 +1379,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       {/* Map Container - Full Screen */}
       <View style={styles.mapContainer}>
-        <CustomerMap
+        <SimpleHosurMap
           userLocation={
             currentLocation
               ? {
@@ -1390,9 +1390,6 @@ export default function HomeScreen() {
           }
           pickupLocation={pickupCoords}
           destinationLocation={destinationCoords}
-          onRouteReady={(distance, duration) => {
-            console.log('🗺️ Route ready:', distance, 'km,', duration, 'min');
-          }}
         />
 
         {/* DEBUG PANEL - Remove after testing */}
