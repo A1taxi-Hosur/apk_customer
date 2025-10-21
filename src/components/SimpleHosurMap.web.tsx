@@ -46,8 +46,9 @@ export default function SimpleHosurMap({
         map: mapRef.current,
         suppressMarkers: true,
         polylineOptions: {
-          strokeColor: '#1F2937',
-          strokeWeight: 4,
+          strokeColor: '#2563EB',
+          strokeWeight: 5,
+          strokeOpacity: 0.8,
         },
       });
     };
@@ -98,22 +99,27 @@ export default function SimpleHosurMap({
       pickupMarkerRef.current.setMap(null);
     }
 
-    if (pickupLocation) {
+    // Only show pickup marker when destination is also selected
+    if (pickupLocation && destinationLocation) {
       pickupMarkerRef.current = new window.google.maps.Marker({
         position: { lat: pickupLocation.latitude, lng: pickupLocation.longitude },
         map: mapRef.current,
-        title: 'Pickup',
+        title: 'Pickup Location',
+        label: {
+          text: '📍',
+          fontSize: '24px',
+        },
         icon: {
           path: window.google.maps.SymbolPath.CIRCLE,
-          scale: 10,
+          scale: 20,
           fillColor: '#10B981',
           fillOpacity: 1,
           strokeColor: '#FFFFFF',
-          strokeWeight: 2,
+          strokeWeight: 3,
         },
       });
     }
-  }, [pickupLocation]);
+  }, [pickupLocation, destinationLocation]);
 
   useEffect(() => {
     if (!mapRef.current || !window.google) return;
@@ -127,13 +133,17 @@ export default function SimpleHosurMap({
         position: { lat: destinationLocation.latitude, lng: destinationLocation.longitude },
         map: mapRef.current,
         title: 'Destination',
+        label: {
+          text: '🎯',
+          fontSize: '24px',
+        },
         icon: {
           path: window.google.maps.SymbolPath.CIRCLE,
-          scale: 10,
+          scale: 20,
           fillColor: '#EF4444',
           fillOpacity: 1,
           strokeColor: '#FFFFFF',
-          strokeWeight: 2,
+          strokeWeight: 3,
         },
       });
     }
@@ -152,9 +162,22 @@ export default function SimpleHosurMap({
       directionsServiceRef.current.route(request, (result: any, status: any) => {
         if (status === 'OK') {
           directionsRendererRef.current.setDirections(result);
-          console.log('🗺️ Route drawn successfully');
+
+          // Auto-fit map to show entire route with padding (Uber-style)
+          const bounds = new window.google.maps.LatLngBounds();
+          bounds.extend({ lat: pickupLocation.latitude, lng: pickupLocation.longitude });
+          bounds.extend({ lat: destinationLocation.latitude, lng: destinationLocation.longitude });
+
+          mapRef.current.fitBounds(bounds, {
+            top: 120,
+            right: 80,
+            bottom: 400,
+            left: 80,
+          });
+
+          console.log('🗺️ [WEB] Route calculated and map fitted to bounds');
         } else {
-          console.error('🗺️ Directions request failed:', status);
+          console.error('🗺️ [WEB] Directions request failed:', status);
         }
       });
     } else {
