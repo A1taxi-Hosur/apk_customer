@@ -7,10 +7,21 @@
     "scheme": "a1taxi",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
+    "icon": "./assets/images/icon.png",
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "icon": "./assets/images/icon.png",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
       "permissions": [
         "INTERNET",
         "ACCESS_FINE_LOCATION",
