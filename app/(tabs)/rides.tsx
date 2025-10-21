@@ -541,8 +541,8 @@ export default function RidesScreen() {
 
         <Text style={styles.statusSubtitle}>{statusInfo.subtitle}</Text>
 
-        {/* OTP Display - Moved to Top */}
-        {ride.pickup_otp && (
+        {/* OTP Display - Only show before trip starts (not in_progress or picked_up) */}
+        {ride.pickup_otp && !['in_progress', 'picked_up'].includes(ride.status) && (
           <View style={styles.otpSection}>
             <Text style={styles.sectionTitle}>🔑 Trip OTP</Text>
             <View style={styles.otpCard}>
@@ -832,7 +832,7 @@ export default function RidesScreen() {
         return {
           icon: Navigation,
           title: 'Trip in Progress',
-          subtitle: eta ? `Arriving in ${formatETA(eta)}` : 'Enjoy your ride!',
+          subtitle: 'Enjoy your ride!',
           color: '#7C3AED',
           backgroundColor: '#EDE9FE',
         };
