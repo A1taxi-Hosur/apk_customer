@@ -40,7 +40,7 @@
     "expo-linking": "~7.1.3",
     "expo-location": "^18.1.6",
     "expo-notifications": "^0.31.4",
-    "expo-print": "~13.1.1",
+    "expo-print": "~13.0.1",
     "expo-router": "~4.0.21",
     "expo-sharing": "~13.1.1",
     "expo-splash-screen": "~0.30.6",
