@@ -42,9 +42,16 @@ export default function SimpleHosurMap({
       style={styles.map}
       provider={PROVIDER_GOOGLE}
       initialRegion={HOSUR_CENTER}
-      showsUserLocation={true}
+      showsUserLocation={false}
       showsMyLocationButton={true}
     >
+      {userLocation && (
+        <Marker
+          coordinate={userLocation}
+          title="Your Location"
+          pinColor="blue"
+        />
+      )}
       {pickupLocation && (
         <Marker
           coordinate={pickupLocation}

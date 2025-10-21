@@ -1391,23 +1391,6 @@ export default function HomeScreen() {
           pickupLocation={pickupCoords}
           destinationLocation={destinationCoords}
         />
-
-        {/* DEBUG PANEL - Remove after testing */}
-        <View style={styles.debugPanel}>
-          <Text style={styles.debugTitle}>MAP DEBUG</Text>
-          <Text style={styles.debugText}>
-            User: {currentLocation ? `✅ ${currentLocation.coords.latitude.toFixed(4)}, ${currentLocation.coords.longitude.toFixed(4)}` : '❌ No location'}
-          </Text>
-          <Text style={styles.debugText}>
-            Pickup: {pickupCoords ? `✅ ${pickupCoords.latitude.toFixed(4)}, ${pickupCoords.longitude.toFixed(4)}` : '❌ Not set'}
-          </Text>
-          <Text style={styles.debugText}>
-            Destination: {destinationCoords ? `✅ ${destinationCoords.latitude.toFixed(4)}, ${destinationCoords.longitude.toFixed(4)}` : '❌ Not set'}
-          </Text>
-          <Text style={styles.debugText}>
-            Route: {pickupCoords && destinationCoords ? '✅ Should draw' : '❌ Waiting for both locations'}
-          </Text>
-        </View>
       </View>
 
       {/* Bottom Sheet - Draggable Over Map */}
@@ -1893,27 +1876,5 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: '#6B7280',
-  },
-  debugPanel: {
-    position: 'absolute',
-    top: 60,
-    left: 10,
-    right: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    padding: 12,
-    borderRadius: 8,
-    zIndex: 1000,
-  },
-  debugTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 8,
-  },
-  debugText: {
-    fontSize: 11,
-    color: '#FFFFFF',
-    marginVertical: 2,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
 });
