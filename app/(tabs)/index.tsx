@@ -109,6 +109,7 @@ export default function HomeScreen() {
   });
   const [isCalculatingFare, setIsCalculatingFare] = useState(false);
   const [allVehicleFares, setAllVehicleFares] = useState<{ [key in VehicleType]?: number }>({});
+  const [locationWatcher, setLocationWatcher] = useState<Location.LocationSubscription | null>(null);
 
   // Bottom sheet draggable state
   const MIN_SHEET_HEIGHT = 350; // Minimum collapsed height
@@ -179,10 +180,14 @@ export default function HomeScreen() {
     requestLocationPermissionOnMount();
     loadVehicleTypes();
     loadActiveZones();
+    startLiveGPSTracking();
 
-    // Cleanup polling on unmount
+    // Cleanup polling and GPS watcher on unmount
     return () => {
       stopDriverLocationPolling();
+      if (locationWatcher) {
+        locationWatcher.remove();
+      }
     };
   }, []);
 
@@ -218,6 +223,50 @@ export default function HomeScreen() {
     }
   }, [pickupCoords, destinationCoords]);
 
+
+  const startLiveGPSTracking = async () => {
+    try {
+      console.log('📍 [GPS] Starting live GPS tracking (Uber-style)...');
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('❌ [GPS] Permission to access location was denied');
+        return;
+      }
+
+      // Watch live GPS updates with high accuracy (like Uber/Ola)
+      const watcher = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.Highest,
+          timeInterval: 2000, // Update every 2 seconds
+          distanceInterval: 2, // Update every 2 meters
+        },
+        (position) => {
+          console.log('📍 [GPS] Live location update:', {
+            lat: position.coords.latitude.toFixed(6),
+            lng: position.coords.longitude.toFixed(6),
+            accuracy: position.coords.accuracy?.toFixed(2) + 'm',
+          });
+
+          setCurrentLocation(position);
+
+          // Auto-update pickup location if not set yet or if no route is being shown
+          if (!pickupCoords || (!destinationCoords)) {
+            setPickupLocation('Current Location');
+            setPickupCoords({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          }
+        }
+      );
+
+      setLocationWatcher(watcher);
+      console.log('✅ [GPS] Live GPS tracking started successfully');
+    } catch (error) {
+      console.error('❌ [GPS] Error starting live GPS tracking:', error);
+    }
+  };
 
   const startDriverLocationPolling = () => {
     if (!currentLocation) {
@@ -1353,6 +1402,16 @@ export default function HomeScreen() {
     validateDestinationZone(location, coords);
   };
 
+  // Handle map region change to update pickup location (Uber-style centered pin)
+  const handleMapRegionChange = (coords: { latitude: number; longitude: number }) => {
+    if (!destinationLocation) {
+      console.log('🗺️ [MAP] Region changed, updating pickup coords:', coords);
+      setPickupCoords(coords);
+      // Optionally reverse geocode to get address
+      setPickupLocation('Current Location');
+    }
+  };
+
   if (locationLoading || vehiclesLoading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -1390,8 +1449,20 @@ export default function HomeScreen() {
           }
           pickupLocation={pickupCoords}
           destinationLocation={destinationCoords}
+          onRegionChangeComplete={handleMapRegionChange}
+          showCenteredPin={!destinationCoords}
         />
       </View>
+
+      {/* Uber-style centered pickup pin overlay */}
+      {!destinationCoords && (
+        <View style={styles.centeredPinContainer}>
+          <View style={styles.centeredPin}>
+            <Text style={styles.centeredPinText}>📍</Text>
+          </View>
+          <View style={styles.centeredPinShadow} />
+        </View>
+      )}
 
       {/* Bottom Sheet - Draggable Over Map */}
       <Animated.View style={[styles.bottomSheet, { top: pan }]}>
@@ -1876,5 +1947,30 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: '#6B7280',
+  },
+  centeredPinContainer: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginLeft: -20,
+    marginTop: -40,
+    alignItems: 'center',
+  },
+  centeredPin: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  centeredPinText: {
+    fontSize: 36,
+  },
+  centeredPinShadow: {
+    width: 16,
+    height: 4,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: 8,
+    marginTop: -4,
   },
 });
