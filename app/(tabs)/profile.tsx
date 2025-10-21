@@ -403,11 +403,19 @@ export default function ProfileScreen() {
             <View style={styles.contentModalContainer}>
               <View style={styles.contentModalHeader}>
                 <Text style={styles.contentModalTitle}>Privacy Policy</Text>
-                <TouchableOpacity onPress={() => setShowPrivacyPolicy(false)}>
+                <TouchableOpacity
+                  onPress={() => setShowPrivacyPolicy(false)}
+                  style={styles.closeButtonContainer}
+                  activeOpacity={0.7}
+                >
                   <Text style={styles.closeButton}>✕</Text>
                 </TouchableOpacity>
               </View>
-              <ScrollView style={styles.contentScrollView} showsVerticalScrollIndicator={true}>
+              <ScrollView
+                style={styles.contentScrollView}
+                showsVerticalScrollIndicator={true}
+                bounces={true}
+              >
                 <Text style={styles.contentText}>{privacyPolicyContent}</Text>
               </ScrollView>
             </View>
@@ -425,11 +433,19 @@ export default function ProfileScreen() {
             <View style={styles.contentModalContainer}>
               <View style={styles.contentModalHeader}>
                 <Text style={styles.contentModalTitle}>Terms and Conditions</Text>
-                <TouchableOpacity onPress={() => setShowTermsConditions(false)}>
+                <TouchableOpacity
+                  onPress={() => setShowTermsConditions(false)}
+                  style={styles.closeButtonContainer}
+                  activeOpacity={0.7}
+                >
                   <Text style={styles.closeButton}>✕</Text>
                 </TouchableOpacity>
               </View>
-              <ScrollView style={styles.contentScrollView} showsVerticalScrollIndicator={true}>
+              <ScrollView
+                style={styles.contentScrollView}
+                showsVerticalScrollIndicator={true}
+                bounces={true}
+              >
                 <Text style={styles.contentText}>{termsConditionsContent}</Text>
               </ScrollView>
             </View>
@@ -652,14 +668,13 @@ const styles = StyleSheet.create({
   },
   contentModalContainer: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    margin: 20,
-    marginTop: 60,
-    marginBottom: 60,
-    maxHeight: '80%',
+    flex: 1,
+    marginTop: 40,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     elevation: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     overflow: 'hidden',
@@ -669,28 +684,38 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
+    paddingTop: 24,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
+    backgroundColor: '#F9FAFB',
   },
   contentModalTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#1F2937',
   },
+  closeButtonContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E5E7EB',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   closeButton: {
     fontSize: 24,
-    color: '#6B7280',
+    color: '#374151',
     fontWeight: 'bold',
-    padding: 4,
+    textAlign: 'center',
   },
   contentScrollView: {
     flex: 1,
-    padding: 20,
   },
   contentText: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#374151',
-    lineHeight: 22,
-    paddingBottom: 20,
+    lineHeight: 24,
+    padding: 20,
+    paddingBottom: 40,
   },
 });
