@@ -8,6 +8,7 @@ interface SimpleHosurMapProps {
   pickupLocation?: { latitude: number; longitude: number } | null;
   destinationLocation?: { latitude: number; longitude: number } | null;
   onRegionChangeComplete?: (coords: { latitude: number; longitude: number }) => void;
+  onDestinationDragEnd?: (coords: { latitude: number; longitude: number }) => void;
   showCenteredPin?: boolean;
 }
 
@@ -25,12 +26,14 @@ export default function SimpleHosurMap({
   pickupLocation,
   destinationLocation,
   onRegionChangeComplete,
+  onDestinationDragEnd,
   showCenteredPin = false,
 }: SimpleHosurMapProps) {
   const mapRef = useRef<MapView>(null);
 
   const handleRegionChangeComplete = (region: any) => {
-    if (onRegionChangeComplete && !destinationLocation) {
+    // Allow region changes only when there's no destination OR when pickup marker doesn't exist yet
+    if (onRegionChangeComplete && (!destinationLocation || !pickupLocation)) {
       onRegionChangeComplete({
         latitude: region.latitude,
         longitude: region.longitude,
@@ -89,13 +92,21 @@ export default function SimpleHosurMap({
       onRegionChangeComplete={handleRegionChangeComplete}
       mapPadding={{ top: 0, right: 0, bottom: 0, left: 0 }}
     >
-      {/* Pickup Marker - Show when destination is selected */}
-      {pickupLocation && destinationLocation && (
+      {/* Pickup Marker - Always show when pickup location exists */}
+      {pickupLocation && (
         <Marker
           coordinate={pickupLocation}
           title="Pickup Location"
           description="Your starting point"
           identifier="pickup"
+          draggable
+          onDragEnd={(e) => {
+            const newCoords = e.nativeEvent.coordinate;
+            console.log('📍 [MAP] Pickup marker dragged to:', newCoords);
+            if (onRegionChangeComplete) {
+              onRegionChangeComplete(newCoords);
+            }
+          }}
         >
           <View style={styles.pickupMarker}>
             <View style={styles.pickupMarkerInner}>
@@ -113,6 +124,14 @@ export default function SimpleHosurMap({
           title="Destination"
           description="Your drop-off point"
           identifier="destination"
+          draggable
+          onDragEnd={(e) => {
+            const newCoords = e.nativeEvent.coordinate;
+            console.log('🎯 [MAP] Destination marker dragged to:', newCoords);
+            if (onDestinationDragEnd) {
+              onDestinationDragEnd(newCoords);
+            }
+          }}
         >
           <View style={styles.destinationMarker}>
             <View style={styles.destinationMarkerInner}>

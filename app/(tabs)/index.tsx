@@ -1423,23 +1423,37 @@ export default function HomeScreen() {
 
   // Handle map region change to update pickup location (Uber-style centered pin)
   const handleMapRegionChange = async (coords: { latitude: number; longitude: number }) => {
-    // Only update if no destination is set (i.e., user is selecting pickup location)
-    if (!destinationCoords) {
-      console.log('🗺️ [MAP] Region changed, updating pickup coords:', coords);
-      setPickupCoords(coords);
+    // Update pickup location when map moves or marker is dragged
+    console.log('🗺️ [MAP] Pickup location updated:', coords);
+    setPickupCoords(coords);
 
-      // Clear previous timer
-      if (reverseGeocodeTimer.current) {
-        clearTimeout(reverseGeocodeTimer.current);
-      }
+    // Clear previous timer
+    if (reverseGeocodeTimer.current) {
+      clearTimeout(reverseGeocodeTimer.current);
+    }
 
-      // Debounce reverse geocoding - only call after user stops moving map for 500ms
-      reverseGeocodeTimer.current = setTimeout(async () => {
-        console.log('🏠 [MAP] Reverse geocoding pickup location...');
-        const address = await googleMapsService.reverseGeocode(coords.latitude, coords.longitude);
-        console.log('✅ [MAP] Pickup address:', address);
-        setPickupLocation(address);
-      }, 500);
+    // Debounce reverse geocoding - only call after user stops moving for 500ms
+    reverseGeocodeTimer.current = setTimeout(async () => {
+      console.log('🏠 [MAP] Reverse geocoding pickup location...');
+      const address = await googleMapsService.reverseGeocode(coords.latitude, coords.longitude);
+      console.log('✅ [MAP] Pickup address:', address);
+      setPickupLocation(address);
+    }, 500);
+  };
+
+  // Handle destination marker dragging
+  const handleDestinationDragEnd = async (coords: { latitude: number; longitude: number }) => {
+    console.log('🎯 [MAP] Destination marker dragged to:', coords);
+    setDestinationCoords(coords);
+
+    // Reverse geocode to get address
+    const address = await googleMapsService.reverseGeocode(coords.latitude, coords.longitude);
+    console.log('✅ [MAP] Destination address:', address);
+    setDestinationLocation(address);
+
+    // Recalculate fare with new destination
+    if (pickupCoords) {
+      calculateFare();
     }
   };
 
@@ -1481,6 +1495,7 @@ export default function HomeScreen() {
           pickupLocation={pickupCoords}
           destinationLocation={destinationCoords}
           onRegionChangeComplete={handleMapRegionChange}
+          onDestinationDragEnd={handleDestinationDragEnd}
           showCenteredPin={!destinationCoords}
         />
       </View>
