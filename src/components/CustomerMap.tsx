@@ -29,6 +29,16 @@ export default function CustomerMap({
   const mapRef = useRef<MapView>(null);
   const [mapReady, setMapReady] = useState(false);
 
+  // Debug: Log what props we receive
+  console.log('🗺️ [CustomerMap] Received props:', {
+    hasUserLocation: !!userLocation,
+    userLocation,
+    hasPickupLocation: !!pickupLocation,
+    pickupLocation,
+    hasDestinationLocation: !!destinationLocation,
+    destinationLocation,
+  });
+
   // Set initial region based on what we have
   const getInitialRegion = (): Region => {
     if (userLocation) {
@@ -43,10 +53,25 @@ export default function CustomerMap({
     return HOSUR_DEFAULT;
   };
 
-  // When map is ready and we have user location, center on it
+  // When map is ready and we have locations, prioritize showing them
   useEffect(() => {
-    if (mapReady && userLocation && mapRef.current) {
-      console.log('🗺️ [CustomerMap] Animating map to user location:', userLocation);
+    if (!mapReady || !mapRef.current) return;
+
+    // Priority 1: If we have pickup, show that
+    if (pickupLocation) {
+      console.log('🗺️ [CustomerMap] Centering on pickup location:', pickupLocation);
+      mapRef.current.animateToRegion(
+        {
+          ...pickupLocation,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        },
+        1000
+      );
+    }
+    // Priority 2: Show user location if no pickup
+    else if (userLocation) {
+      console.log('🗺️ [CustomerMap] Centering on user location:', userLocation);
       mapRef.current.animateToRegion(
         {
           ...userLocation,
@@ -56,7 +81,7 @@ export default function CustomerMap({
         1000
       );
     }
-  }, [mapReady, userLocation?.latitude, userLocation?.longitude]);
+  }, [mapReady, userLocation?.latitude, userLocation?.longitude, pickupLocation?.latitude, pickupLocation?.longitude]);
 
   // When we have both pickup and destination, fit to show both
   useEffect(() => {
@@ -69,19 +94,30 @@ export default function CustomerMap({
     }
   }, [mapReady, pickupLocation, destinationLocation]);
 
+  const initialRegion = getInitialRegion();
+
   return (
     <View style={styles.container}>
       <MapView
         ref={mapRef}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
-        initialRegion={getInitialRegion()}
+        initialRegion={initialRegion}
         showsUserLocation={true}
         showsMyLocationButton={true}
         showsCompass={true}
         onMapReady={() => {
           console.log('✅ Map is ready');
+          console.log('✅ Map initial region:', initialRegion);
           setMapReady(true);
+
+          // Force immediate animation to the region
+          if (mapRef.current) {
+            console.log('🗺️ [CustomerMap] FORCING map to animate to region:', initialRegion);
+            setTimeout(() => {
+              mapRef.current?.animateToRegion(initialRegion, 500);
+            }, 100);
+          }
         }}
       >
         {/* Pickup Marker (Green) */}
