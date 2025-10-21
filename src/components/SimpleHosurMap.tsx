@@ -26,20 +26,6 @@ export default function SimpleHosurMap({
   const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
-    if (mapRef.current && userLocation) {
-      console.log('📍 [MAP] Animating to user location:', userLocation);
-      mapRef.current.animateToRegion(
-        {
-          ...userLocation,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        },
-        1000
-      );
-    }
-  }, [userLocation]);
-
-  useEffect(() => {
     if (mapRef.current && pickupLocation && destinationLocation) {
       console.log('🗺️ [MAP] Fitting map to show route');
       mapRef.current.fitToCoordinates([pickupLocation, destinationLocation], {
@@ -49,38 +35,27 @@ export default function SimpleHosurMap({
     }
   }, [pickupLocation, destinationLocation]);
 
-  console.log('🗺️ [MAP] Rendering with:', {
-    userLocation,
-    pickupLocation,
-    destinationLocation,
-  });
-
   return (
     <MapView
       ref={mapRef}
       style={styles.map}
       provider={PROVIDER_GOOGLE}
-      initialRegion={userLocation || HOSUR_CENTER}
-      showsUserLocation={false}
+      region={
+        userLocation
+          ? {
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.05,
+            }
+          : HOSUR_CENTER
+      }
+      showsUserLocation={true}
       showsMyLocationButton={true}
     >
-      {userLocation && (
-        <Marker
-          coordinate={{
-            latitude: userLocation.latitude,
-            longitude: userLocation.longitude,
-          }}
-          title="You are here"
-          description="Your current location"
-          pinColor="blue"
-        />
-      )}
       {pickupLocation && (
         <Marker
-          coordinate={{
-            latitude: pickupLocation.latitude,
-            longitude: pickupLocation.longitude,
-          }}
+          coordinate={pickupLocation}
           title="Pickup"
           description="Pickup location"
           pinColor="green"
@@ -88,10 +63,7 @@ export default function SimpleHosurMap({
       )}
       {destinationLocation && (
         <Marker
-          coordinate={{
-            latitude: destinationLocation.latitude,
-            longitude: destinationLocation.longitude,
-          }}
+          coordinate={destinationLocation}
           title="Destination"
           description="Drop-off location"
           pinColor="red"
