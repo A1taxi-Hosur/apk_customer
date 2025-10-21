@@ -3,7 +3,8 @@ import { supabase } from '../utils/supabase';
 import { Platform, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import * as Print from 'expo-print';
+// TODO: Re-enable after package-lock.json is regenerated
+// import * as Print from 'expo-print';
 
 interface BillData {
   ride: Ride & {
@@ -282,6 +283,16 @@ class BillService {
         console.log('✅ [BILL] Print dialog opened (web)');
       } else {
         // Mobile platform: Generate PDF using expo-print
+        // TODO: Temporarily disabled until expo-print is installed
+        console.warn('⚠️ [BILL] PDF generation temporarily disabled - expo-print not installed');
+        Alert.alert(
+          'Feature Unavailable',
+          'PDF generation is temporarily unavailable. Please use the web version to print bills.',
+          [{ text: 'OK' }]
+        );
+        return;
+
+        /* Temporarily disabled - will be re-enabled after expo-print is installed
         const fileName = `A1Taxi_Bill_${ride.ride_code}_${new Date().toISOString().split('T')[0]}.pdf`;
 
         const { uri } = await Print.printToFileAsync({
@@ -311,6 +322,7 @@ class BillService {
         } else {
           Alert.alert('Success', `Bill saved as PDF to: ${fileUri}`);
         }
+        */
       }
     } catch (error) {
       console.error('❌ [BILL] Error downloading bill:', error);
