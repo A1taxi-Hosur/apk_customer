@@ -1674,7 +1674,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollViewContent: {
-    paddingBottom: 150,
+    paddingBottom: 250,
     flexGrow: 1,
   },
   locationInputs: {
@@ -1860,7 +1860,8 @@ const styles = StyleSheet.create({
   },
   bookingSection: {
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingTop: 16,
+    paddingBottom: 40,
   },
   bookButton: {
     borderRadius: 12,
