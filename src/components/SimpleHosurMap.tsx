@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 
 interface SimpleHosurMapProps {
   userLocation: { latitude: number; longitude: number } | null;
@@ -14,6 +15,8 @@ const HOSUR_CENTER = {
   latitudeDelta: 0.1,
   longitudeDelta: 0.1,
 };
+
+const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
 export default function SimpleHosurMap({
   userLocation,
@@ -35,6 +38,16 @@ export default function SimpleHosurMap({
       );
     }
   }, [userLocation]);
+
+  useEffect(() => {
+    if (mapRef.current && pickupLocation && destinationLocation) {
+      console.log('🗺️ Fitting map to show route');
+      mapRef.current.fitToCoordinates([pickupLocation, destinationLocation], {
+        edgePadding: { top: 100, right: 50, bottom: 300, left: 50 },
+        animated: true,
+      });
+    }
+  }, [pickupLocation, destinationLocation]);
 
   return (
     <MapView
@@ -64,6 +77,22 @@ export default function SimpleHosurMap({
           coordinate={destinationLocation}
           title="Destination"
           pinColor="red"
+        />
+      )}
+      {pickupLocation && destinationLocation && GOOGLE_MAPS_API_KEY && (
+        <MapViewDirections
+          origin={pickupLocation}
+          destination={destinationLocation}
+          apikey={GOOGLE_MAPS_API_KEY}
+          strokeWidth={4}
+          strokeColor="#1F2937"
+          optimizeWaypoints={true}
+          onReady={(result) => {
+            console.log('🗺️ Route ready:', result.distance, 'km,', result.duration, 'min');
+          }}
+          onError={(errorMessage) => {
+            console.error('🗺️ Route error:', errorMessage);
+          }}
         />
       )}
     </MapView>
