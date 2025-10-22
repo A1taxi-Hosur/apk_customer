@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
-import { Navigation, MapPin, Car } from 'lucide-react-native';
 
 interface AvailableDriver {
   driver_id: string;
@@ -191,7 +190,7 @@ export default function SimpleHosurMap({
       onRegionChangeComplete={handleRegionChangeComplete}
       mapPadding={{ top: 0, right: 0, bottom: 0, left: 0 }}
     >
-      {/* Pickup Marker - Green icon */}
+      {/* Pickup Marker - Green circle with text */}
       {pickupLocation && (
         <Marker
           coordinate={pickupLocation}
@@ -209,12 +208,12 @@ export default function SimpleHosurMap({
           }}
         >
           <View style={[styles.markerContainer, styles.pickupMarker]}>
-            <Navigation size={16} color="#FFFFFF" />
+            <Text style={styles.markerText}>P</Text>
           </View>
         </Marker>
       )}
 
-      {/* Destination Marker - Red icon */}
+      {/* Destination Marker - Red circle with text */}
       {destinationLocation && (
         <Marker
           coordinate={destinationLocation}
@@ -232,7 +231,7 @@ export default function SimpleHosurMap({
           }}
         >
           <View style={[styles.markerContainer, styles.destinationMarker]}>
-            <MapPin size={16} color="#FFFFFF" />
+            <Text style={styles.markerText}>D</Text>
           </View>
         </Marker>
       )}
@@ -246,7 +245,7 @@ export default function SimpleHosurMap({
         />
       )}
 
-      {/* Available Driver Markers - Show drivers with car icons */}
+      {/* Available Driver Markers - Show drivers with car icon text */}
       {showDrivers && availableDrivers.map((driver) => {
         console.log('🚗 [MAP] Rendering driver marker:', driver.driver_id, 'at', driver.latitude, driver.longitude);
         return (
@@ -264,7 +263,7 @@ export default function SimpleHosurMap({
             anchor={{ x: 0.5, y: 0.5 }}
           >
             <View style={styles.driverMarker}>
-              <Car size={20} color="#FFFFFF" />
+              <Text style={styles.driverMarkerText}>🚗</Text>
             </View>
           </Marker>
         );
@@ -278,18 +277,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   markerContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: '#FFFFFF',
-    elevation: 4,
+    elevation: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
   },
   pickupMarker: {
     backgroundColor: '#059669',
@@ -297,19 +296,27 @@ const styles = StyleSheet.create({
   destinationMarker: {
     backgroundColor: '#DC2626',
   },
+  markerText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   driverMarker: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: '#2563EB',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 3,
+    borderWidth: 4,
     borderColor: '#FFFFFF',
-    elevation: 6,
+    elevation: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+  },
+  driverMarkerText: {
+    fontSize: 22,
   },
 });
