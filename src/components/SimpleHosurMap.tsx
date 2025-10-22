@@ -205,11 +205,10 @@ export default function SimpleHosurMap({
             onDragEnd={(e) => {
               const newCoords = e.nativeEvent.coordinate;
               console.log('📍 [MAP] Pickup marker dragged to:', newCoords);
-            if (onRegionChangeComplete) {
-              onRegionChangeComplete(newCoords);
-            }
-            }
-          }}
+              if (onRegionChangeComplete) {
+                onRegionChangeComplete(newCoords);
+              }
+            }}
           >
             <View style={[styles.markerContainer, styles.pickupMarker]}>
               <Text style={styles.markerText}>P</Text>
@@ -232,11 +231,10 @@ export default function SimpleHosurMap({
             onDragEnd={(e) => {
               const newCoords = e.nativeEvent.coordinate;
               console.log('🎯 [MAP] Destination marker dragged to:', newCoords);
-            if (onDestinationDragEnd) {
-              onDestinationDragEnd(newCoords);
-            }
-            }
-          }}
+              if (onDestinationDragEnd) {
+                onDestinationDragEnd(newCoords);
+              }
+            }}
           >
             <View style={[styles.markerContainer, styles.destinationMarker]}>
               <Text style={styles.markerText}>D</Text>
