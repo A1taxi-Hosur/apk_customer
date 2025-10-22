@@ -103,14 +103,14 @@ export default function SimpleHosurMap({
       onRegionChangeComplete={handleRegionChangeComplete}
       mapPadding={{ top: 0, right: 0, bottom: 0, left: 0 }}
     >
-      {/* Pickup Marker - Always show when pickup location exists */}
+      {/* Pickup Marker - Green pin with label */}
       {pickupLocation ? (
         (() => {
           console.log('✅ [SIMPLE-MAP] RENDERING PICKUP MARKER:', pickupLocation);
           return (
             <Marker
               coordinate={pickupLocation}
-              title="Pickup Location"
+              title="Pickup"
               description="Your starting point"
               identifier="pickup"
               draggable
@@ -122,11 +122,16 @@ export default function SimpleHosurMap({
                 }
               }}
             >
-              <View style={styles.pickupMarker}>
-                <View style={styles.pickupMarkerInner}>
-                  <Text style={styles.markerIcon}>📍</Text>
+              <View style={styles.pickupMarkerContainer}>
+                <View style={styles.pickupLabelContainer}>
+                  <Text style={styles.pickupLabelText}>Pickup</Text>
                 </View>
-                <View style={styles.markerShadow} />
+                <View style={styles.pickupMarker}>
+                  <View style={styles.pickupMarkerInner}>
+                    <Text style={styles.markerIcon}>📍</Text>
+                  </View>
+                  <View style={styles.markerPin} />
+                </View>
               </View>
             </Marker>
           );
@@ -135,7 +140,7 @@ export default function SimpleHosurMap({
         console.log('❌ [SIMPLE-MAP] NOT rendering pickup marker - pickupLocation is:', pickupLocation) || null
       )}
 
-      {/* Destination Marker - Always show when destination exists */}
+      {/* Destination Marker - Red pin with label */}
       {destinationLocation ? (
         (() => {
           console.log('✅ [SIMPLE-MAP] RENDERING DESTINATION MARKER:', destinationLocation);
@@ -154,11 +159,16 @@ export default function SimpleHosurMap({
                 }
               }}
             >
-              <View style={styles.destinationMarker}>
-                <View style={styles.destinationMarkerInner}>
-                  <Text style={styles.markerIcon}>🎯</Text>
+              <View style={styles.destinationMarkerContainer}>
+                <View style={styles.destinationLabelContainer}>
+                  <Text style={styles.destinationLabelText}>Destination</Text>
                 </View>
-                <View style={styles.markerShadow} />
+                <View style={styles.destinationMarker}>
+                  <View style={styles.destinationMarkerInner}>
+                    <Text style={styles.markerIcon}>🎯</Text>
+                  </View>
+                  <View style={styles.markerPin} />
+                </View>
               </View>
             </Marker>
           );
@@ -167,17 +177,18 @@ export default function SimpleHosurMap({
         console.log('❌ [SIMPLE-MAP] NOT rendering destination marker - destinationLocation is:', destinationLocation) || null
       )}
 
-      {/* Route Line - Show when both locations exist */}
+      {/* Route Line - Blue highlighted route when both locations exist */}
       {pickupLocation && destinationLocation && GOOGLE_MAPS_API_KEY ? (
         <MapViewDirections
           origin={pickupLocation}
           destination={destinationLocation}
           apikey={GOOGLE_MAPS_API_KEY}
-          strokeWidth={6}
-          strokeColor="#2563EB"
+          strokeWidth={5}
+          strokeColor="#1F2937"
           optimizeWaypoints={true}
           precision="high"
           mode="DRIVING"
+          lineDashPattern={[0]}
           onReady={(result) => {
             console.log('✅ [MAP] Route successfully drawn:', {
               distance: `${result.distance.toFixed(1)} km`,
@@ -213,6 +224,27 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
+  pickupMarkerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pickupLabelContainer: {
+    backgroundColor: '#10B981',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    marginBottom: 4,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  pickupLabelText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
   pickupMarker: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -220,8 +252,8 @@ const styles = StyleSheet.create({
   pickupMarkerInner: {
     backgroundColor: '#10B981',
     borderRadius: 25,
-    width: 50,
-    height: 50,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
@@ -232,6 +264,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
+  destinationMarkerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  destinationLabelContainer: {
+    backgroundColor: '#EF4444',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    marginBottom: 4,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  destinationLabelText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
   destinationMarker: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -239,8 +292,8 @@ const styles = StyleSheet.create({
   destinationMarkerInner: {
     backgroundColor: '#EF4444',
     borderRadius: 25,
-    width: 50,
-    height: 50,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
@@ -252,13 +305,18 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   markerIcon: {
-    fontSize: 24,
+    fontSize: 22,
   },
-  markerShadow: {
-    width: 10,
-    height: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    borderRadius: 5,
-    marginTop: -5,
+  markerPin: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 8,
+    borderRightWidth: 8,
+    borderTopWidth: 12,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    marginTop: -3,
   },
 });
