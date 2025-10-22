@@ -80,6 +80,7 @@ export default function SimpleHosurMap({
   availableDrivers = [],
   showDrivers = false,
 }: SimpleHosurMapProps) {
+  console.log('🔥🔥🔥 [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 🔥🔥🔥');
   console.log('🗺️ [SIMPLE-MAP] ===== RENDERING MAP =====');
   console.log('🗺️ [SIMPLE-MAP] Props received:', {
     hasUserLocation: !!userLocation,
@@ -192,48 +193,56 @@ export default function SimpleHosurMap({
     >
       {/* Pickup Marker - Green circle with text */}
       {pickupLocation && (
-        <Marker
-          coordinate={pickupLocation}
-          title="Pickup"
-          description="Your starting point"
-          identifier="pickup"
-          draggable
-          anchor={{ x: 0.5, y: 0.5 }}
-          onDragEnd={(e) => {
-            const newCoords = e.nativeEvent.coordinate;
-            console.log('📍 [MAP] Pickup marker dragged to:', newCoords);
+        <>
+          {console.log('🟢 [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', pickupLocation)}
+          <Marker
+            coordinate={pickupLocation}
+            title="Pickup"
+            description="Your starting point"
+            identifier="pickup"
+            draggable
+            anchor={{ x: 0.5, y: 0.5 }}
+            onDragEnd={(e) => {
+              const newCoords = e.nativeEvent.coordinate;
+              console.log('📍 [MAP] Pickup marker dragged to:', newCoords);
             if (onRegionChangeComplete) {
               onRegionChangeComplete(newCoords);
             }
+            }
           }}
-        >
-          <View style={[styles.markerContainer, styles.pickupMarker]}>
-            <Text style={styles.markerText}>P</Text>
-          </View>
-        </Marker>
+          >
+            <View style={[styles.markerContainer, styles.pickupMarker]}>
+              <Text style={styles.markerText}>P</Text>
+            </View>
+          </Marker>
+        </>
       )}
 
       {/* Destination Marker - Red circle with text */}
       {destinationLocation && (
-        <Marker
-          coordinate={destinationLocation}
-          title="Destination"
-          description="Your drop-off point"
-          identifier="destination"
-          draggable
-          anchor={{ x: 0.5, y: 0.5 }}
-          onDragEnd={(e) => {
-            const newCoords = e.nativeEvent.coordinate;
-            console.log('🎯 [MAP] Destination marker dragged to:', newCoords);
+        <>
+          {console.log('🔴 [SIMPLE-MAP-V2] RENDERING DESTINATION MARKER at:', destinationLocation)}
+          <Marker
+            coordinate={destinationLocation}
+            title="Destination"
+            description="Your drop-off point"
+            identifier="destination"
+            draggable
+            anchor={{ x: 0.5, y: 0.5 }}
+            onDragEnd={(e) => {
+              const newCoords = e.nativeEvent.coordinate;
+              console.log('🎯 [MAP] Destination marker dragged to:', newCoords);
             if (onDestinationDragEnd) {
               onDestinationDragEnd(newCoords);
             }
+            }
           }}
-        >
-          <View style={[styles.markerContainer, styles.destinationMarker]}>
-            <Text style={styles.markerText}>D</Text>
-          </View>
-        </Marker>
+          >
+            <View style={[styles.markerContainer, styles.destinationMarker]}>
+              <Text style={styles.markerText}>D</Text>
+            </View>
+          </Marker>
+        </>
       )}
 
       {/* Route Polyline - Shows route between pickup and destination */}
