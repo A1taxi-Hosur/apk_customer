@@ -1,7 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import { Navigation, MapPin, Car } from 'lucide-react-native';
+
+interface AvailableDriver {
+  driver_id: string;
+  user_id: string;
+  vehicle_type: string;
+  latitude: number;
+  longitude: number;
+  heading?: number;
+  distance?: number;
+  rating?: number;
+}
 
 interface SimpleHosurMapProps {
   userLocation: { latitude: number; longitude: number } | null;
@@ -10,6 +21,8 @@ interface SimpleHosurMapProps {
   onRegionChangeComplete?: (coords: { latitude: number; longitude: number }) => void;
   onDestinationDragEnd?: (coords: { latitude: number; longitude: number }) => void;
   showCenteredPin?: boolean;
+  availableDrivers?: AvailableDriver[];
+  showDrivers?: boolean;
 }
 
 const HOSUR_CENTER = {
@@ -21,6 +34,43 @@ const HOSUR_CENTER = {
 
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
+const decodePolyline = (encoded: string) => {
+  const poly = [];
+  let index = 0;
+  const len = encoded.length;
+  let lat = 0;
+  let lng = 0;
+
+  while (index < len) {
+    let b;
+    let shift = 0;
+    let result = 0;
+    do {
+      b = encoded.charAt(index++).charCodeAt(0) - 63;
+      result |= (b & 0x1f) << shift;
+      shift += 5;
+    } while (b >= 0x20);
+    const dlat = ((result & 1) !== 0 ? ~(result >> 1) : (result >> 1));
+    lat += dlat;
+
+    shift = 0;
+    result = 0;
+    do {
+      b = encoded.charAt(index++).charCodeAt(0) - 63;
+      result |= (b & 0x1f) << shift;
+      shift += 5;
+    } while (b >= 0x20);
+    const dlng = ((result & 1) !== 0 ? ~(result >> 1) : (result >> 1));
+    lng += dlng;
+
+    poly.push({
+      latitude: lat / 1e5,
+      longitude: lng / 1e5,
+    });
+  }
+  return poly;
+};
+
 export default function SimpleHosurMap({
   userLocation,
   pickupLocation,
@@ -28,6 +78,8 @@ export default function SimpleHosurMap({
   onRegionChangeComplete,
   onDestinationDragEnd,
   showCenteredPin = false,
+  availableDrivers = [],
+  showDrivers = false,
 }: SimpleHosurMapProps) {
   console.log('🗺️ [SIMPLE-MAP] ===== RENDERING MAP =====');
   console.log('🗺️ [SIMPLE-MAP] Props received:', {
@@ -37,10 +89,13 @@ export default function SimpleHosurMap({
     showCenteredPin,
     userLocation,
     pickupLocation,
-    destinationLocation
+    destinationLocation,
+    availableDriversCount: availableDrivers.length,
+    showDrivers
   });
 
   const mapRef = useRef<MapView>(null);
+  const [routeCoordinates, setRouteCoordinates] = useState<any[]>([]);
 
   const handleRegionChangeComplete = (region: any) => {
     // Allow region changes only when there's no destination OR when pickup marker doesn't exist yet
@@ -68,11 +123,17 @@ export default function SimpleHosurMap({
     }
   }, [userLocation]);
 
+  // Calculate route when locations change
+  useEffect(() => {
+    if (pickupLocation && destinationLocation && GOOGLE_MAPS_API_KEY) {
+      calculateRoute();
+    }
+  }, [pickupLocation, destinationLocation]);
+
   // Fit map to show both pickup and destination with route
   useEffect(() => {
     if (mapRef.current && pickupLocation && destinationLocation) {
       console.log('🗺️ [MAP] Fitting map to show complete route with markers');
-      // Small delay to ensure markers are rendered before fitting
       setTimeout(() => {
         mapRef.current?.fitToCoordinates([pickupLocation, destinationLocation], {
           edgePadding: { top: 120, right: 80, bottom: 400, left: 80 },
@@ -81,6 +142,33 @@ export default function SimpleHosurMap({
       }, 100);
     }
   }, [pickupLocation, destinationLocation]);
+
+  const calculateRoute = async () => {
+    if (!pickupLocation || !destinationLocation) return;
+
+    try {
+      const origin = `${pickupLocation.latitude},${pickupLocation.longitude}`;
+      const destination = `${destinationLocation.latitude},${destinationLocation.longitude}`;
+
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${GOOGLE_MAPS_API_KEY}`
+      );
+
+      const data = await response.json();
+
+      if (data.routes && data.routes.length > 0) {
+        const points = data.routes[0].overview_polyline.points;
+        const decodedPoints = decodePolyline(points);
+        setRouteCoordinates(decodedPoints);
+        console.log('✅ [MAP] Route calculated with', decodedPoints.length, 'points');
+      } else {
+        setRouteCoordinates([pickupLocation, destinationLocation]);
+      }
+    } catch (error) {
+      console.error('❌ [MAP] Route calculation error:', error);
+      setRouteCoordinates([pickupLocation, destinationLocation]);
+    }
+  };
 
   return (
     <MapView
@@ -103,15 +191,15 @@ export default function SimpleHosurMap({
       onRegionChangeComplete={handleRegionChangeComplete}
       mapPadding={{ top: 0, right: 0, bottom: 0, left: 0 }}
     >
-      {/* Pickup Marker - Green pin */}
+      {/* Pickup Marker - Green icon */}
       {pickupLocation && (
         <Marker
           coordinate={pickupLocation}
           title="Pickup"
           description="Your starting point"
           identifier="pickup"
-          pinColor="green"
           draggable
+          anchor={{ x: 0.5, y: 0.5 }}
           onDragEnd={(e) => {
             const newCoords = e.nativeEvent.coordinate;
             console.log('📍 [MAP] Pickup marker dragged to:', newCoords);
@@ -119,18 +207,22 @@ export default function SimpleHosurMap({
               onRegionChangeComplete(newCoords);
             }
           }}
-        />
+        >
+          <View style={[styles.markerContainer, styles.pickupMarker]}>
+            <Navigation size={16} color="#FFFFFF" />
+          </View>
+        </Marker>
       )}
 
-      {/* Destination Marker - Red pin */}
+      {/* Destination Marker - Red icon */}
       {destinationLocation && (
         <Marker
           coordinate={destinationLocation}
           title="Destination"
           description="Your drop-off point"
           identifier="destination"
-          pinColor="red"
           draggable
+          anchor={{ x: 0.5, y: 0.5 }}
           onDragEnd={(e) => {
             const newCoords = e.nativeEvent.coordinate;
             console.log('🎯 [MAP] Destination marker dragged to:', newCoords);
@@ -138,40 +230,45 @@ export default function SimpleHosurMap({
               onDestinationDragEnd(newCoords);
             }
           }}
+        >
+          <View style={[styles.markerContainer, styles.destinationMarker]}>
+            <MapPin size={16} color="#FFFFFF" />
+          </View>
+        </Marker>
+      )}
+
+      {/* Route Polyline - Shows route between pickup and destination */}
+      {routeCoordinates.length > 1 && (
+        <Polyline
+          coordinates={routeCoordinates}
+          strokeColor="#10B981"
+          strokeWidth={4}
         />
       )}
 
-      {/* Route Line - Dark route when both locations exist */}
-      {pickupLocation && destinationLocation && GOOGLE_MAPS_API_KEY && (
-        <MapViewDirections
-          origin={pickupLocation}
-          destination={destinationLocation}
-          apikey={GOOGLE_MAPS_API_KEY}
-          strokeWidth={5}
-          strokeColor="#1F2937"
-          optimizeWaypoints={true}
-          precision="high"
-          mode="DRIVING"
-          lineDashPattern={[0]}
-          onReady={(result) => {
-            console.log('✅ [MAP] Route successfully drawn:', {
-              distance: `${result.distance.toFixed(1)} km`,
-              duration: `${Math.round(result.duration)} min`,
-              coordinates: result.coordinates.length,
-              pickup: pickupLocation,
-              destination: destinationLocation
-            });
-          }}
-          onError={(errorMessage) => {
-            console.error('❌ [MAP] Route calculation error:', errorMessage);
-            console.error('❌ [MAP] Failed route details:', {
-              pickup: pickupLocation,
-              destination: destinationLocation,
-              apiKeyExists: !!GOOGLE_MAPS_API_KEY
-            });
-          }}
-        />
-      )}
+      {/* Available Driver Markers - Show drivers with car icons */}
+      {showDrivers && availableDrivers.map((driver) => {
+        console.log('🚗 [MAP] Rendering driver marker:', driver.driver_id, 'at', driver.latitude, driver.longitude);
+        return (
+          <Marker
+            key={`driver-${driver.driver_id}`}
+            coordinate={{
+              latitude: driver.latitude,
+              longitude: driver.longitude,
+            }}
+            title={`Driver (${driver.vehicle_type})`}
+            description={driver.rating ? `Rating: ${driver.rating.toFixed(1)} ⭐` : 'Available'}
+            identifier={`driver-${driver.driver_id}`}
+            rotation={driver.heading || 0}
+            flat
+            anchor={{ x: 0.5, y: 0.5 }}
+          >
+            <View style={styles.driverMarker}>
+              <Car size={20} color="#FFFFFF" />
+            </View>
+          </Marker>
+        );
+      })}
     </MapView>
   );
 }
@@ -179,5 +276,40 @@ export default function SimpleHosurMap({
 const styles = StyleSheet.create({
   map: {
     flex: 1,
+  },
+  markerContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  pickupMarker: {
+    backgroundColor: '#059669',
+  },
+  destinationMarker: {
+    backgroundColor: '#DC2626',
+  },
+  driverMarker: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#2563EB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
   },
 });

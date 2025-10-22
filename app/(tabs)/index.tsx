@@ -1497,6 +1497,8 @@ export default function HomeScreen() {
           onRegionChangeComplete={handleMapRegionChange}
           onDestinationDragEnd={handleDestinationDragEnd}
           showCenteredPin={!destinationCoords}
+          availableDrivers={availableDrivers}
+          showDrivers={showDriversOnMap}
         />
       </View>
 
