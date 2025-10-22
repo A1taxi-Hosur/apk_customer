@@ -10,6 +10,8 @@ interface AnimatedDriverMarkerProps {
   isMoving?: boolean;
 }
 
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
 export default function AnimatedDriverMarker({
   latitude,
   longitude,

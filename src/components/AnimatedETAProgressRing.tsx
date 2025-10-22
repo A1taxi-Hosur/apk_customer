@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { Clock } from 'lucide-react-native';
 import Svg, { Circle } from 'react-native-svg';
@@ -11,15 +11,17 @@ interface AnimatedETAProgressRingProps {
   strokeWidth?: number;
 }
 
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
 export default function AnimatedETAProgressRing({
   etaMinutes,
   maxETA = 30,
   size = 120,
   strokeWidth = 8,
 }: AnimatedETAProgressRingProps) {
+  const progressAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const [strokeDashoffset, setStrokeDashoffset] = useState(0);
 
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -51,14 +53,18 @@ export default function AnimatedETAProgressRing({
 
   useEffect(() => {
     const progress = Math.max(0, Math.min(1, 1 - etaMinutes / maxETA));
-    const targetOffset = circumference - (progress * circumference);
 
-    const timer = setTimeout(() => {
-      setStrokeDashoffset(targetOffset);
-    }, 100);
+    Animated.timing(progressAnim, {
+      toValue: progress,
+      duration: 800,
+      useNativeDriver: false,
+    }).start();
+  }, [etaMinutes, maxETA]);
 
-    return () => clearTimeout(timer);
-  }, [etaMinutes, maxETA, circumference]);
+  const strokeDashoffset = progressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [circumference, 0],
+  });
 
   const getColorByETA = () => {
     if (etaMinutes <= 2) return ['#10B981', '#059669'];
@@ -90,7 +96,7 @@ export default function AnimatedETAProgressRing({
             fill="none"
           />
 
-          <Circle
+          <AnimatedCircle
             cx={size / 2}
             cy={size / 2}
             r={radius}
