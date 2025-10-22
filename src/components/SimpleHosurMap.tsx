@@ -103,82 +103,46 @@ export default function SimpleHosurMap({
       onRegionChangeComplete={handleRegionChangeComplete}
       mapPadding={{ top: 0, right: 0, bottom: 0, left: 0 }}
     >
-      {/* Pickup Marker - Green pin with label */}
-      {pickupLocation ? (
-        (() => {
-          console.log('✅ [SIMPLE-MAP] RENDERING PICKUP MARKER:', pickupLocation);
-          return (
-            <Marker
-              coordinate={pickupLocation}
-              title="Pickup"
-              description="Your starting point"
-              identifier="pickup"
-              draggable
-              onDragEnd={(e) => {
-                const newCoords = e.nativeEvent.coordinate;
-                console.log('📍 [MAP] Pickup marker dragged to:', newCoords);
-                if (onRegionChangeComplete) {
-                  onRegionChangeComplete(newCoords);
-                }
-              }}
-            >
-              <View style={styles.pickupMarkerContainer}>
-                <View style={styles.pickupLabelContainer}>
-                  <Text style={styles.pickupLabelText}>Pickup</Text>
-                </View>
-                <View style={styles.pickupMarker}>
-                  <View style={styles.pickupMarkerInner}>
-                    <Text style={styles.markerIcon}>📍</Text>
-                  </View>
-                  <View style={styles.markerPin} />
-                </View>
-              </View>
-            </Marker>
-          );
-        })()
-      ) : (
-        console.log('❌ [SIMPLE-MAP] NOT rendering pickup marker - pickupLocation is:', pickupLocation) || null
+      {/* Pickup Marker - Green pin */}
+      {pickupLocation && (
+        <Marker
+          coordinate={pickupLocation}
+          title="Pickup"
+          description="Your starting point"
+          identifier="pickup"
+          pinColor="green"
+          draggable
+          onDragEnd={(e) => {
+            const newCoords = e.nativeEvent.coordinate;
+            console.log('📍 [MAP] Pickup marker dragged to:', newCoords);
+            if (onRegionChangeComplete) {
+              onRegionChangeComplete(newCoords);
+            }
+          }}
+        />
       )}
 
-      {/* Destination Marker - Red pin with label */}
-      {destinationLocation ? (
-        (() => {
-          console.log('✅ [SIMPLE-MAP] RENDERING DESTINATION MARKER:', destinationLocation);
-          return (
-            <Marker
-              coordinate={destinationLocation}
-              title="Destination"
-              description="Your drop-off point"
-              identifier="destination"
-              draggable
-              onDragEnd={(e) => {
-                const newCoords = e.nativeEvent.coordinate;
-                console.log('🎯 [MAP] Destination marker dragged to:', newCoords);
-                if (onDestinationDragEnd) {
-                  onDestinationDragEnd(newCoords);
-                }
-              }}
-            >
-              <View style={styles.destinationMarkerContainer}>
-                <View style={styles.destinationLabelContainer}>
-                  <Text style={styles.destinationLabelText}>Destination</Text>
-                </View>
-                <View style={styles.destinationMarker}>
-                  <View style={styles.destinationMarkerInner}>
-                    <Text style={styles.markerIcon}>🎯</Text>
-                  </View>
-                  <View style={styles.markerPin} />
-                </View>
-              </View>
-            </Marker>
-          );
-        })()
-      ) : (
-        console.log('❌ [SIMPLE-MAP] NOT rendering destination marker - destinationLocation is:', destinationLocation) || null
+      {/* Destination Marker - Red pin */}
+      {destinationLocation && (
+        <Marker
+          coordinate={destinationLocation}
+          title="Destination"
+          description="Your drop-off point"
+          identifier="destination"
+          pinColor="red"
+          draggable
+          onDragEnd={(e) => {
+            const newCoords = e.nativeEvent.coordinate;
+            console.log('🎯 [MAP] Destination marker dragged to:', newCoords);
+            if (onDestinationDragEnd) {
+              onDestinationDragEnd(newCoords);
+            }
+          }}
+        />
       )}
 
-      {/* Route Line - Blue highlighted route when both locations exist */}
-      {pickupLocation && destinationLocation && GOOGLE_MAPS_API_KEY ? (
+      {/* Route Line - Dark route when both locations exist */}
+      {pickupLocation && destinationLocation && GOOGLE_MAPS_API_KEY && (
         <MapViewDirections
           origin={pickupLocation}
           destination={destinationLocation}
@@ -207,14 +171,6 @@ export default function SimpleHosurMap({
             });
           }}
         />
-      ) : (
-        console.log('⚠️ [MAP] Route not rendered. Missing:', {
-          hasPickup: !!pickupLocation,
-          hasDestination: !!destinationLocation,
-          hasApiKey: !!GOOGLE_MAPS_API_KEY,
-          pickupLocation,
-          destinationLocation
-        }) || null
       )}
     </MapView>
   );
@@ -223,100 +179,5 @@ export default function SimpleHosurMap({
 const styles = StyleSheet.create({
   map: {
     flex: 1,
-  },
-  pickupMarkerContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pickupLabelContainer: {
-    backgroundColor: '#10B981',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    marginBottom: 4,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  pickupLabelText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  pickupMarker: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pickupMarkerInner: {
-    backgroundColor: '#10B981',
-    borderRadius: 25,
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: '#FFFFFF',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  destinationMarkerContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  destinationLabelContainer: {
-    backgroundColor: '#EF4444',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    marginBottom: 4,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  destinationLabelText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  destinationMarker: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  destinationMarkerInner: {
-    backgroundColor: '#EF4444',
-    borderRadius: 25,
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: '#FFFFFF',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  markerIcon: {
-    fontSize: 22,
-  },
-  markerPin: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 8,
-    borderRightWidth: 8,
-    borderTopWidth: 12,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    marginTop: -3,
   },
 });
