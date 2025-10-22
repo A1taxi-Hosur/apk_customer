@@ -1,82 +1,120 @@
-10-22 21:40:43.417 14176 22334 I ReactNativeJS: '≡ƒÜÇ≡ƒÜÇ≡ƒÜÇ [SIMPLE-MAP-V2] FILE LOADED - TIMESTAMP:', '2025-10-22T16:10:43.417Z'
-10-22 21:41:10.339 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:10.341 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:10.341 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:10.341 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:10.341 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:11.390 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:11.390 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:11.390 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:11.391 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:11.391 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:11.554 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:11.555 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:11.555 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:11.555 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:11.555 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:11.712 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:11.713 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:11.713 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:11.713 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:11.713 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:16.158 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:16.158 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:16.158 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:16.159 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:16.159 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:17.521 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:17.522 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:17.522 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:17.523 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:17.523 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:18.150 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:18.150 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:18.150 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:18.151 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:18.151 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:19.369 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:19.370 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:19.370 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:19.370 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:19.371 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:22.513 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:22.513 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:22.514 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:22.514 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:22.514 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:23.775 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:23.775 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:23.775 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:23.776 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:23.776 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:30.497 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:30.497 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:30.497 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:30.497 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:30.497 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:31.604 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:31.605 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:31.605 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:31.605 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:31.605 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:41.684 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:41.685 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:41.685 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:41.685 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:41.686 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:44.502 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:44.502 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:44.502 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:44.502 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:44.502 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:45.893 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:45.894 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:45.894 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:45.895 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:45.895 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-10-22 21:41:55.738 14176 22334 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
-10-22 21:41:55.738 14176 22334 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
-10-22 21:41:55.738 14176 22334 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
-10-22 21:41:55.738 14176 22334 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
-10-22 21:41:55.738 14176 22334 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.748619, longitude: 77.8298435 }
-^C^C
+C:\Users\Dell\Desktop\platform-tools-latest-windows (1)\platform-tools>adb logcat | findstr "SIMPLE-MAP HOME-V2"
+10-22 22:46:05.492  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:46:05.492  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:46:05.492  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:46:05.493  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:46:05.493  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7487507, longitude: 77.8296374 }
+10-22 22:46:06.406  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:46:06.406  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:46:06.406  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:46:06.407  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:46:06.407  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7487507, longitude: 77.8296374 }
+10-22 22:46:16.513  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:46:16.514  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:46:16.514  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:46:16.514  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:46:16.514  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7487507, longitude: 77.8296374 }
+10-22 22:46:40.092  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:46:40.093  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:46:40.093  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:46:40.093  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:46:40.093  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7487507, longitude: 77.8296374 }
+10-22 22:46:41.938  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:46:41.939  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:46:41.939  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:46:41.940  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:46:41.940  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7487507, longitude: 77.8296374 }
+10-22 22:46:41.964  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:46:41.964  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:46:41.964  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:46:41.964  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:46:41.964  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7487507, longitude: 77.8296374 }
+10-22 22:47:00.265  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:00.265  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:00.265  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:00.265  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:00.266  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:00.525  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:00.525  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:00.525  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:00.525  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:00.525  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:00.537  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:00.537  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:00.537  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:00.537  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:00.537  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:01.234  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:01.234  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:01.235  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:01.235  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:01.236  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:01.333  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:01.334  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:01.334  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:01.334  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:01.334  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:01.492  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:01.493  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:01.493  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:01.493  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:01.493  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:04.240  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:04.240  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:04.240  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:04.240  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:04.241  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:10.067  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:10.067  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:10.067  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:10.067  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:10.067  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:10.084  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:10.137  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:10.137  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:10.138  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:10.138  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:10.138  1939  4534 I ReactNativeJS: '≡ƒö┤ [SIMPLE-MAP-V2] RENDERING DESTINATION MARKER at:', { latitude: 12.8303987, longitude: 77.86623689999999 }
+10-22 22:47:10.162  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:10.172  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:10.172  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:10.172  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:10.172  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:10.172  1939  4534 I ReactNativeJS: '≡ƒö┤ [SIMPLE-MAP-V2] RENDERING DESTINATION MARKER at:', { latitude: 12.8303987, longitude: 77.86623689999999 }
+10-22 22:47:10.198  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:10.206  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:10.206  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:10.207  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:10.207  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:10.207  1939  4534 I ReactNativeJS: '≡ƒö┤ [SIMPLE-MAP-V2] RENDERING DESTINATION MARKER at:', { latitude: 12.8303987, longitude: 77.86623689999999 }
+10-22 22:47:10.538  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:10.538  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:10.538  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:10.538  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:10.538  1939  4534 I ReactNativeJS: '≡ƒö┤ [SIMPLE-MAP-V2] RENDERING DESTINATION MARKER at:', { latitude: 12.8303987, longitude: 77.86623689999999 }
+10-22 22:47:11.020  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:11.035  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:11.035  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:11.035  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:11.035  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:11.035  1939  4534 I ReactNativeJS: '≡ƒö┤ [SIMPLE-MAP-V2] RENDERING DESTINATION MARKER at:', { latitude: 12.8303987, longitude: 77.86623689999999 }
+10-22 22:47:11.050  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:11.059  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:11.059  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:11.059  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:11.059  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:11.059  1939  4534 I ReactNativeJS: '≡ƒö┤ [SIMPLE-MAP-V2] RENDERING DESTINATION MARKER at:', { latitude: 12.8303987, longitude: 77.86623689999999 }
+10-22 22:47:11.073  1939  4534 I ReactNativeJS: '≡ƒÅá≡ƒÅá≡ƒÅá [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', { hasUserLocation: true,
+10-22 22:47:11.082  1939  4534 I ReactNativeJS: ≡ƒöÑ≡ƒöÑ≡ƒöÑ [SIMPLE-MAP-V2] NEW CODE IS LOADED - VERSION 2.0 ≡ƒöÑ≡ƒöÑ≡ƒöÑ
+10-22 22:47:11.082  1939  4534 I ReactNativeJS: ≡ƒù║∩╕Å [SIMPLE-MAP] ===== RENDERING MAP =====
+10-22 22:47:11.082  1939  4534 I ReactNativeJS: '≡ƒù║∩╕Å [SIMPLE-MAP] Props received:', { hasUserLocation: true,
+10-22 22:47:11.082  1939  4534 I ReactNativeJS: '≡ƒƒó [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', { latitude: 12.7486283, longitude: 77.82998 }
+10-22 22:47:11.083  1939  4534 I ReactNativeJS: '≡ƒö┤ [SIMPLE-MAP-V2] RENDERING DESTINATION MARKER at:', { latitude: 12.8303987, longitude: 77.86623689999999 }
+
+
+
+
+
+
+
+
