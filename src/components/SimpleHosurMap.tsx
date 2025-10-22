@@ -193,61 +193,57 @@ export default function SimpleHosurMap({
       onRegionChangeComplete={handleRegionChangeComplete}
       mapPadding={{ top: 0, right: 0, bottom: 0, left: 0 }}
     >
-      {/* Pickup Marker - Green circle with text */}
+      {/* Pickup Marker - ULTRA VISIBLE TEST VERSION */}
       {pickupLocation && (
         <>
-          {console.log('🟢 [SIMPLE-MAP-V2] RENDERING PICKUP MARKER at:', pickupLocation)}
-          {console.log('🟢 [DEBUG] Pickup marker props:', {
-            hasCoordinate: !!pickupLocation,
-            lat: pickupLocation.latitude,
-            lng: pickupLocation.longitude,
-            isValidLat: pickupLocation.latitude >= -90 && pickupLocation.latitude <= 90,
-            isValidLng: pickupLocation.longitude >= -180 && pickupLocation.longitude <= 180,
-          })}
+          {console.log('🟢🟢🟢 [V3] RENDERING ULTRA-VISIBLE PICKUP MARKER at:', pickupLocation)}
           <Marker
             coordinate={pickupLocation}
-            title="Pickup Location"
-            description="Drag to adjust your pickup point"
+            title="🟢 PICKUP HERE 🟢"
+            description="Your starting point"
             identifier="pickup"
-            pinColor="green"
             draggable
+            zIndex={1000}
+            opacity={1.0}
             onDragEnd={(e) => {
               const newCoords = e.nativeEvent.coordinate;
-              console.log('📍 [MAP] Pickup marker dragged to:', newCoords);
+              console.log('📍 [V3] Pickup marker dragged to:', newCoords);
               if (onRegionChangeComplete) {
                 onRegionChangeComplete(newCoords);
               }
             }}
-          />
+          >
+            <View style={styles.ultraVisiblePickupMarker}>
+              <Text style={styles.ultraVisibleMarkerText}>PICKUP</Text>
+            </View>
+          </Marker>
         </>
       )}
 
-      {/* Destination Marker - Red circle with text */}
+      {/* Destination Marker - ULTRA VISIBLE TEST VERSION */}
       {destinationLocation && (
         <>
-          {console.log('🔴 [SIMPLE-MAP-V2] RENDERING DESTINATION MARKER at:', destinationLocation)}
-          {console.log('🔴 [DEBUG] Destination marker props:', {
-            hasCoordinate: !!destinationLocation,
-            lat: destinationLocation.latitude,
-            lng: destinationLocation.longitude,
-            isValidLat: destinationLocation.latitude >= -90 && destinationLocation.latitude <= 90,
-            isValidLng: destinationLocation.longitude >= -180 && destinationLocation.longitude <= 180,
-          })}
+          {console.log('🔴🔴🔴 [V3] RENDERING ULTRA-VISIBLE DESTINATION MARKER at:', destinationLocation)}
           <Marker
             coordinate={destinationLocation}
-            title="Destination"
-            description="Drag to adjust your drop-off point"
+            title="🔴 DESTINATION HERE 🔴"
+            description="Your drop-off point"
             identifier="destination"
-            pinColor="red"
             draggable
+            zIndex={1000}
+            opacity={1.0}
             onDragEnd={(e) => {
               const newCoords = e.nativeEvent.coordinate;
-              console.log('🎯 [MAP] Destination marker dragged to:', newCoords);
+              console.log('🎯 [V3] Destination marker dragged to:', newCoords);
               if (onDestinationDragEnd) {
                 onDestinationDragEnd(newCoords);
               }
             }}
-          />
+          >
+            <View style={styles.ultraVisibleDestinationMarker}>
+              <Text style={styles.ultraVisibleMarkerText}>DESTINATION</Text>
+            </View>
+          </Marker>
         </>
       )}
 
@@ -333,5 +329,41 @@ const styles = StyleSheet.create({
   },
   driverMarkerText: {
     fontSize: 22,
+  },
+  ultraVisiblePickupMarker: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#00FF00',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 8,
+    borderColor: '#000000',
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.9,
+    shadowRadius: 20,
+  },
+  ultraVisibleDestinationMarker: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#FF0000',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 8,
+    borderColor: '#000000',
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.9,
+    shadowRadius: 20,
+  },
+  ultraVisibleMarkerText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
