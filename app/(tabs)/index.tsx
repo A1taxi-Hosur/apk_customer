@@ -1478,6 +1478,13 @@ export default function HomeScreen() {
   console.warn('🏠 [HOME] pickupLocation text:', pickupLocation);
   console.warn('🏠 [HOME] availableDrivers count:', availableDrivers.length);
   console.warn('🏠 [HOME] showDriversOnMap:', showDriversOnMap);
+  console.log('🏠🏠🏠 [HOME-V2] ABOUT TO RENDER SimpleHosurMap with props:', {
+    hasUserLocation: !!currentLocation,
+    hasPickup: !!pickupCoords,
+    hasDestination: !!destinationCoords,
+    showDriversOnMap,
+    timestamp: new Date().toISOString()
+  });
 
   return (
     <View style={styles.container}>

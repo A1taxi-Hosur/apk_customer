@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 
+console.log('🚀🚀🚀 [SIMPLE-MAP-V2] FILE LOADED - TIMESTAMP:', new Date().toISOString());
+
 interface AvailableDriver {
   driver_id: string;
   user_id: string;
