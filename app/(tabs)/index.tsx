@@ -1500,15 +1500,6 @@ export default function HomeScreen() {
         />
       </View>
 
-      {/* Uber-style centered pickup pin overlay */}
-      {!destinationCoords && (
-        <View style={styles.centeredPinContainer}>
-          <View style={styles.centeredPin}>
-            <Text style={styles.centeredPinText}>📍</Text>
-          </View>
-          <View style={styles.centeredPinShadow} />
-        </View>
-      )}
 
       {/* Bottom Sheet - Draggable Over Map */}
       <Animated.View style={[styles.bottomSheet, { top: pan }]}>
@@ -1993,30 +1984,5 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: '#6B7280',
-  },
-  centeredPinContainer: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginLeft: -20,
-    marginTop: -40,
-    alignItems: 'center',
-  },
-  centeredPin: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  centeredPinText: {
-    fontSize: 36,
-  },
-  centeredPinShadow: {
-    width: 16,
-    height: 4,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    borderRadius: 8,
-    marginTop: -4,
   },
 });
