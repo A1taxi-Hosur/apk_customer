@@ -52,9 +52,9 @@ export default function SimpleHosurMap({
         map: mapRef.current,
         suppressMarkers: true,
         polylineOptions: {
-          strokeColor: '#2563EB',
+          strokeColor: '#1F2937',
           strokeWeight: 5,
-          strokeOpacity: 0.8,
+          strokeOpacity: 1.0,
         },
       });
     };
