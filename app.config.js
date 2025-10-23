@@ -23,12 +23,6 @@ module.exports = {
       },
     ],
     './plugins/withGoogleMapsApiKey.js',
-    [
-      'react-native-maps',
-      {
-        googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-      },
-    ],
     'expo-font',
     'expo-web-browser',
     'expo-location',

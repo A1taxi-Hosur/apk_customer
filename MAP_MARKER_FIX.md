@@ -37,8 +37,10 @@ Downgrade react-native-maps to the stable version used by the driver app:
 
 ## Changes Made
 1. ✅ Downgraded react-native-maps from 1.26.0 to 1.14.0 in package.json
-2. ✅ Reverted unnecessary marker prop additions (key, identifier, zIndex, flat)
-3. ✅ Re-enabled R8 full mode (wasn't the issue)
+2. ✅ Removed react-native-maps plugin from app.config.js (version 1.14.0 doesn't have a config plugin)
+3. ✅ Relying on custom withGoogleMapsApiKey.js plugin for native configuration
+4. ✅ Reverted unnecessary marker prop additions (key, identifier, zIndex, flat)
+5. ✅ Re-enabled R8 full mode (wasn't the issue)
 
 ## Next Steps
 1. Run `npm install` to install the correct version
