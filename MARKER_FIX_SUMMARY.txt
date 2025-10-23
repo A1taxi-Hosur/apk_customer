@@ -1,47 +1,51 @@
 ===========================================
-REACT-NATIVE-MAPS MARKER FIX - ROOT CAUSE
+MARKER RENDERING ISSUE - CRITICAL FINDINGS
 ===========================================
 
-PROBLEM IDENTIFIED:
-- Markers not rendering on Google Maps
-- Map tiles loading correctly
-- Driver app shows markers, customer app doesn't
+CURRENT STATUS: MARKERS STILL NOT RENDERING
+------------------------------------------
+Latest build with all KSP fixes still shows NO markers.
 
-ROOT CAUSE:
-- KSP (Kotlin Symbol Processing) version MISMATCH
-- Project was using: KSP 2.0.21-1.0.27
-- Expo expects:      KSP 2.0.21-1.0.28
-- This causes native modules (including react-native-maps) to compile incorrectly
-- Markers fail to render because the native marker module doesn't link properly
+CRITICAL DIAGNOSTIC EVIDENCE:
+-----------------------------
+✅ Map tiles render (Google Maps works)
+✅ React components render (3 markers logged in console)
+✅ MapView ref exists
+❌ onMapReady callback NEVER fires <- THIS IS THE SMOKING GUN
 
-ORIGINAL ERROR:
-"Key 1.9.24 is missing in the map"
-- React Native 0.79.4 uses Kotlin 1.9.24
-- Expo SDK 53 expects Kotlin 2.0.21
-- ExpoModulesCorePlugin.gradle has mapping: "2.0.21": "2.0.21-1.0.28"
+What onMapReady not firing means:
+- The native Google MapView is NOT completing initialization
+- The bridge between React Native and native MapView is broken
+- Markers can't render because the native map view isn't ready
 
-FIXES APPLIED:
-1. gradle.properties: Changed KSP_VERSION from 2.0.21-1.0.27 to 2.0.21-1.0.28
-2. eas-build-pre-install.sh: Updated KSP_VERSION export
-3. eas-build-post-install.sh: Updated forced KSP_VERSION
-4. SimpleHosurMap.tsx: Added proper marker props (key, identifier, pinColor)
+FIXES ALREADY APPLIED (didn't solve it):
+---------------------------------------
+1. ✅ KSP version corrected to 2.0.21-1.0.28 in ALL files
+2. ✅ eas.json updated with correct KSP version
+3. ✅ Marker props optimized (tracksViewChanges={false})
+4. ✅ Simplified marker implementation
+5. ✅ Google Maps API key verified in app.json
 
-TEST MAP IMPROVEMENTS:
-- Added 3 test markers at different locations
-- Added key/identifier props for proper React Native tracking
-- Added pinColor for visual debugging (red, green, blue)
-- Added flat={false} to ensure 3D rendering
-- Added explicit zIndex values
-- Added red overlay to confirm component renders
+THE REAL PROBLEM:
+-----------------
+This is NOT a KSP version issue (that's fixed).
+This is NOT a marker configuration issue.
+This IS a native Google MapView initialization failure.
 
-NEXT STEPS:
-1. Run: EAS_NO_VCS=1 npx eas build --platform android --profile preview --clear-cache
-2. Install APK and check logs for: "🧪🧪🧪 TEST MAP"
-3. You should see 3 colored markers on the map
-4. If markers appear, the KSP version fix worked
+Possible causes:
+1. R8/ProGuard is stripping required MapView classes in release builds
+2. Google Play Services isn't properly configured
+3. react-native-maps native module isn't properly linked
+4. There's a compatibility issue with react-native-maps 1.26.0 + RN 0.79.4
 
-WHY THIS MATTERS:
-- KSP version mismatch causes SILENT native module failures
-- react-native-maps compiles but markers don't render
-- This is why map tiles work but markers don't
-- This is a known issue with Expo SDK 53 + React Native 0.79.x
+RECOMMENDED FIX:
+----------------
+The issue is likely R8 full mode (enabled in gradle.properties) is
+stripping classes needed for MapView initialization.
+
+Solution: Add ProGuard rules OR disable R8 full mode for testing.
+
+Current gradle.properties has:
+android.enableR8.fullMode=true
+
+This aggressive optimization can break react-native-maps.
