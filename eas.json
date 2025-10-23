@@ -15,7 +15,7 @@
       },
       "env": {
         "KOTLIN_VERSION": "2.0.21",
-        "KSP_VERSION": "2.0.21-1.0.27",
+        "KSP_VERSION": "2.0.21-1.0.28",
         "EXPO_PUBLIC_GOOGLE_MAPS_API_KEY": "AIzaSyBIHJUk4DuAG7tjp_gIdNhUJdpBKN1eM2Q",
         "EXPO_PUBLIC_SUPABASE_URL": "https://whubaypabojomdyfqxcf.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodWJheXBhYm9qb21keWZxeGNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MDYwMzEsImV4cCI6MjA3MjI4MjAzMX0.0LUHKqX1wdFnmk3KRdyv1lceMxurg_OksZKQ1apn0og"
@@ -27,7 +27,7 @@
       },
       "env": {
         "KOTLIN_VERSION": "2.0.21",
-        "KSP_VERSION": "2.0.21-1.0.27",
+        "KSP_VERSION": "2.0.21-1.0.28",
         "EXPO_PUBLIC_GOOGLE_MAPS_API_KEY": "AIzaSyBIHJUk4DuAG7tjp_gIdNhUJdpBKN1eM2Q",
         "EXPO_PUBLIC_SUPABASE_URL": "https://whubaypabojomdyfqxcf.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodWJheXBhYm9qb21keWZxeGNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3MDYwMzEsImV4cCI6MjA3MjI4MjAzMX0.0LUHKqX1wdFnmk3KRdyv1lceMxurg_OksZKQ1apn0og"
