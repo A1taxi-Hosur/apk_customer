@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 console.log('🧪🧪🧪 TEST MAP LOADED');
@@ -27,11 +29,47 @@ export default function SimpleHosurMap(props: any) {
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
         }}
+        showsUserLocation={false}
+        showsMyLocationButton={false}
+        loadingEnabled={true}
+        zoomEnabled={true}
       >
         <Marker
-          coordinate={{ latitude: 12.7402, longitude: 77.8240 }}
-          title="Test Marker"
+          key="test-marker-1"
+          identifier="test-marker-1"
+          coordinate={{
+            latitude: 12.7402,
+            longitude: 77.8240
+          }}
+          title="Center Marker"
           description="Testing"
+          pinColor="red"
+          flat={false}
+          zIndex={1000}
+        />
+        <Marker
+          key="test-marker-2"
+          identifier="test-marker-2"
+          coordinate={{
+            latitude: 12.7502,
+            longitude: 77.8340
+          }}
+          title="North East Marker"
+          pinColor="green"
+          flat={false}
+          zIndex={999}
+        />
+        <Marker
+          key="test-marker-3"
+          identifier="test-marker-3"
+          coordinate={{
+            latitude: 12.7302,
+            longitude: 77.8140
+          }}
+          title="South West Marker"
+          pinColor="blue"
+          flat={false}
+          zIndex={998}
         />
       </MapView>
     </View>
@@ -62,6 +100,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   map: {
+    width: width,
+    height: height,
     flex: 1
   },
   testOverlay: {
