@@ -10,6 +10,10 @@ export default function SimpleHosurMap(props: any) {
 
   return (
     <View style={styles.container}>
+      <View style={styles.testOverlay}>
+        <Text style={styles.testText}>MAP COMPONENT IS RENDERING</Text>
+      </View>
+
       <View style={styles.banner}>
         <Text style={styles.bannerText}>TEST MAP - ONE MARKER</Text>
       </View>
@@ -40,15 +44,16 @@ const styles = StyleSheet.create({
   },
   banner: {
     position: 'absolute',
-    top: 60,
+    top: 10,
     left: 10,
     right: 10,
     backgroundColor: '#00FF00',
-    padding: 12,
-    zIndex: 10000,
-    borderWidth: 3,
-    borderColor: '#000',
-    borderRadius: 6,
+    padding: 20,
+    zIndex: 999999,
+    borderWidth: 5,
+    borderColor: '#FF0000',
+    borderRadius: 8,
+    elevation: 100,
   },
   bannerText: {
     color: '#000',
@@ -58,5 +63,24 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1
+  },
+  testOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+    zIndex: 1000000,
+    justifyContent: 'center',
+    alignItems: 'center',
+    pointerEvents: 'none',
+  },
+  testText: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: 'bold',
+    backgroundColor: '#000000',
+    padding: 20,
   },
 });
