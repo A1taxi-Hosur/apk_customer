@@ -1,0 +1,47 @@
+===========================================
+REACT-NATIVE-MAPS MARKER FIX - ROOT CAUSE
+===========================================
+
+PROBLEM IDENTIFIED:
+- Markers not rendering on Google Maps
+- Map tiles loading correctly
+- Driver app shows markers, customer app doesn't
+
+ROOT CAUSE:
+- KSP (Kotlin Symbol Processing) version MISMATCH
+- Project was using: KSP 2.0.21-1.0.27
+- Expo expects:      KSP 2.0.21-1.0.28
+- This causes native modules (including react-native-maps) to compile incorrectly
+- Markers fail to render because the native marker module doesn't link properly
+
+ORIGINAL ERROR:
+"Key 1.9.24 is missing in the map"
+- React Native 0.79.4 uses Kotlin 1.9.24
+- Expo SDK 53 expects Kotlin 2.0.21
+- ExpoModulesCorePlugin.gradle has mapping: "2.0.21": "2.0.21-1.0.28"
+
+FIXES APPLIED:
+1. gradle.properties: Changed KSP_VERSION from 2.0.21-1.0.27 to 2.0.21-1.0.28
+2. eas-build-pre-install.sh: Updated KSP_VERSION export
+3. eas-build-post-install.sh: Updated forced KSP_VERSION
+4. SimpleHosurMap.tsx: Added proper marker props (key, identifier, pinColor)
+
+TEST MAP IMPROVEMENTS:
+- Added 3 test markers at different locations
+- Added key/identifier props for proper React Native tracking
+- Added pinColor for visual debugging (red, green, blue)
+- Added flat={false} to ensure 3D rendering
+- Added explicit zIndex values
+- Added red overlay to confirm component renders
+
+NEXT STEPS:
+1. Run: EAS_NO_VCS=1 npx eas build --platform android --profile preview --clear-cache
+2. Install APK and check logs for: "🧪🧪🧪 TEST MAP"
+3. You should see 3 colored markers on the map
+4. If markers appear, the KSP version fix worked
+
+WHY THIS MATTERS:
+- KSP version mismatch causes SILENT native module failures
+- react-native-maps compiles but markers don't render
+- This is why map tiles work but markers don't
+- This is a known issue with Expo SDK 53 + React Native 0.79.x

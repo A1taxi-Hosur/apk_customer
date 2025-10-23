@@ -25,7 +25,7 @@ if [ -d "android" ]; then
     cat > "$GRADLE_PROPS.tmp" << EOF
 # FORCEFULLY SET Kotlin and KSP versions
 KOTLIN_VERSION=2.0.21
-KSP_VERSION=2.0.21-1.0.27
+KSP_VERSION=2.0.21-1.0.28
 
 EOF
     cat "$GRADLE_PROPS" >> "$GRADLE_PROPS.tmp"
