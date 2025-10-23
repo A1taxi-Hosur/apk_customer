@@ -89,24 +89,37 @@ export default function SimpleHosurMap(props: any) {
         }}
       >
         <Marker
+          key="marker-center"
+          identifier="marker-center"
           coordinate={{ latitude: 12.7402, longitude: 77.8240 }}
           title="Center Marker"
           description="Red marker at center"
+          pinColor="red"
           tracksViewChanges={false}
+          flat={false}
+          zIndex={3}
         />
         <Marker
+          key="marker-ne"
+          identifier="marker-ne"
           coordinate={{ latitude: 12.7502, longitude: 77.8340 }}
           title="North East Marker"
           description="Green marker NE"
           pinColor="green"
           tracksViewChanges={false}
+          flat={false}
+          zIndex={2}
         />
         <Marker
+          key="marker-sw"
+          identifier="marker-sw"
           coordinate={{ latitude: 12.7302, longitude: 77.8140 }}
           title="South West Marker"
           description="Blue marker SW"
           pinColor="blue"
           tracksViewChanges={false}
+          flat={false}
+          zIndex={1}
         />
       </MapView>
 
