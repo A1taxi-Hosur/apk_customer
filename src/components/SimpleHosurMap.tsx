@@ -88,21 +88,26 @@ export default function SimpleHosurMap(props: any) {
           console.log('🧪 MapView onLayout called');
         }}
       >
-        {TEST_MARKERS.map((marker) => {
-          console.log('🧪 Rendering marker:', marker.id);
-          return (
-            <Marker
-              key={marker.id}
-              coordinate={marker.coordinate}
-              title={marker.title}
-              description={marker.description}
-              pinColor={marker.color}
-              onPress={() => {
-                console.log('🧪 Marker pressed:', marker.id);
-              }}
-            />
-          );
-        })}
+        <Marker
+          coordinate={{ latitude: 12.7402, longitude: 77.8240 }}
+          title="Center Marker"
+          description="Red marker at center"
+          tracksViewChanges={false}
+        />
+        <Marker
+          coordinate={{ latitude: 12.7502, longitude: 77.8340 }}
+          title="North East Marker"
+          description="Green marker NE"
+          pinColor="green"
+          tracksViewChanges={false}
+        />
+        <Marker
+          coordinate={{ latitude: 12.7302, longitude: 77.8140 }}
+          title="South West Marker"
+          description="Blue marker SW"
+          pinColor="blue"
+          tracksViewChanges={false}
+        />
       </MapView>
 
       <View style={styles.debugOverlay}>
